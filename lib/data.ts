@@ -366,3 +366,12 @@ export function cityLabel(city: City) {
 export function getLicenseReq(trade: Trade, state: string): string {
   return trade.stateLicenseRequirement[state] ?? "Active trade license and general liability coverage required. We verify this for you."
 }
+
+export type ContentOverride = {
+  heroSubheading?: string
+  uniqueParagraph?: string
+  expertise?: string[]
+  compliance?: string[]
+  marketVibe?: string
+  recentPlacements?: string[]
+}

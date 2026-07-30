@@ -9,6 +9,8 @@ import { LeadForm } from "@/components/lead-form"
 import { TradeIcon } from "@/components/trade-card"
 import { ValueProps } from "@/components/value-props"
 import { cities, cityLabel, getCity, getLicenseReq, getTrade, site, trades } from "@/lib/data"
+import type { ContentOverride } from "@/lib/data"
+import contentOverrides from "@/lib/generated-content.json"
 
 type Params = { city: string; trade: string }
 
@@ -36,6 +38,13 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
   const trade = getTrade(tradeSlug)
 
   if (!city || !trade) notFound()
+
+  const contentKey = `${citySlug}-${tradeSlug.split("-")[0]}`
+  const override: ContentOverride | undefined =
+    contentOverrides[0]?.[contentKey as keyof (typeof contentOverrides)[0]]
+
+  const isDev = process.env.NODE_ENV === "development"
+  const showDevWarning = isDev && !override
 
   const serviceSchema = {
     '@context': 'https://schema.org',
@@ -82,6 +91,13 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
         </ol>
       </nav>
 
+      {showDevWarning ? (
+        <div className="bg-red-600 text-white text-center text-sm font-bold py-2 px-4">
+          ⚠️ Generic SEO Content — Update JSON (missing key:{" "}
+          <code className="bg-red-800 px-1.5 py-0.5 rounded text-xs">{contentKey}</code>)
+        </div>
+      ) : null}
+
       <Hero
         eyebrow={`${cityLabel(city)} · ${city.metro}`}
         heading={
@@ -89,7 +105,10 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
             Reliable {trade.name} in <span className="text-accent">{city.name}</span>.
           </>
         }
-        subheading={`Pre-vetted, insured, and ready to bid. Stop dealing with Craigslist flakes — connect with professional ${trade.name.toLowerCase()} today.`}
+        subheading={
+          override?.heroSubheading ??
+          `Pre-vetted, insured, and ready to bid. Stop dealing with Craigslist flakes — connect with professional ${trade.name.toLowerCase()} today.`
+        }
         aside={
           <LeadForm
             trade={trade.name}
@@ -100,6 +119,14 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
           />
         }
       />
+
+      {override?.uniqueParagraph ? (
+        <section className="bg-background">
+          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+            <p className="text-lg leading-relaxed text-muted-foreground">{override.uniqueParagraph}</p>
+          </div>
+        </section>
+      ) : null}
 
       <ValueProps />
 
@@ -114,10 +141,10 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">{trade.blurb}</p>
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-              {trade.projectTypes.map((type) => (
-                <li key={type} className="flex items-start gap-2 font-medium text-foreground">
+              {(override?.expertise ?? trade.projectTypes).map((item) => (
+                <li key={item} className="flex items-start gap-2 font-medium text-foreground">
                   <CircleCheckBig className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
-                  {type}
+                  {item}
                 </li>
               ))}
             </ul>
@@ -126,7 +153,7 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
           <div className="rounded-lg border border-border bg-secondary p-6 sm:p-8">
             <h3 className="text-xl font-bold text-foreground">Every referral includes</h3>
             <ul className="mt-5 flex flex-col gap-4">
-              {scopeChecklist.map((item) => (
+              {(override?.compliance ?? scopeChecklist).map((item) => (
                 <li key={item} className="flex items-start gap-3 leading-relaxed text-foreground">
                   <CircleCheckBig className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
                   {item}
@@ -144,6 +171,33 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
           </div>
         </div>
       </section>
+
+      {override?.marketVibe ? (
+        <section className="bg-secondary">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+            <h2 className="text-2xl font-bold text-foreground">Why We Focus on {city.name}</h2>
+            <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">{override.marketVibe}</p>
+          </div>
+        </section>
+      ) : null}
+
+      {override?.recentPlacements?.length ? (
+        <section className="bg-background">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+            <h2 className="text-2xl font-bold text-foreground">
+              Recent {trade.name} Placements in {city.name}
+            </h2>
+            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+              {override.recentPlacements.map((placement) => (
+                <li key={placement} className="flex items-start gap-2 leading-relaxed text-muted-foreground">
+                  <CircleCheckBig className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+                  {placement}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
 
       <script
         type="application/ld+json"
