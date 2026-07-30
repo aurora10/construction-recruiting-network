@@ -1,0 +1,41 @@
+# CrewBridge — Business Summary
+
+CrewBridge is a B2B construction subcontractor recruiting network. We connect pre-vetted subcontractor crews with General Contractors across 10 major US markets.
+
+## What We Do
+
+We match General Contractors with qualified subcontractor crews for residential and light commercial construction projects. Every crew in our network is pre-vetted for licensing, insurance, and work history before they are matched to a GC. This removes the friction of cold-calling subs, checking references, and verifying credentials — GCs get project-ready crews matched to their scope, timeline, and location.
+
+## Business Model
+
+CrewBridge operates on a finder's fee model. General Contractors pay a one-time referral fee when they successfully hire a subcontractor crew through our network. There are no pay-per-lead charges, no monthly subscriptions, and no hidden costs. Subcontractors join the network and receive job referrals at no cost — they negotiate and contract directly with the GC on their own terms.
+
+## Markets Served (10 US Markets)
+
+- **Raleigh, NC** — Research Triangle
+- **Durham, NC** — Research Triangle
+- **Charlotte, NC** — Charlotte Metro
+- **Greensboro, NC** — Piedmont Triad
+- **Greenville, SC** — Upstate
+- **Atlanta, GA** — Metro Atlanta
+- **Nashville, TN** — Middle Tennessee
+- **Dallas, TX** — DFW Metroplex
+- **Austin, TX** — Central Texas
+- **Phoenix, AZ** — Valley of the Sun
+
+## Trades Covered (8 Trades)
+
+- Framing Subcontractors — Rough carpentry for stick-built and panelized residential, multifamily, and light commercial
+- Drywall Subcontractors — Hang, tape, finish, and texture for single-family, multifamily, tenant improvement, and repair
+- Electrical Contractors — Licensed electricians and journeyman-led crews for rough-in, trim-out, service upgrades, and inspections
+- Plumbing Contractors — Licensed plumbers for underslab, rough-in, top-out, and fixture set
+- Concrete Contractors — Form, pour, and finish crews for footings, slabs, flatwork, and structural concrete
+- Roofing Subcontractors — Shingle, metal, and low-slope crews with fall-protection compliance and same-week dry-in
+- Painting Contractors — Spray and roll crews for new construction production painting, repaints, and commercial coatings
+- HVAC Contractors — Mechanical crews for duct rough-in, equipment set, start-up, and load-calc documentation
+
+## Contact
+
+- **Email:** dispatch@crewbridge.com
+- **Phone:** (919) 555-0142
+- **Hours:** Mon–Sat, 6:00 AM – 7:00 PM ET
