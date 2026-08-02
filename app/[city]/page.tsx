@@ -7,6 +7,8 @@ import { LeadForm } from "@/components/lead-form"
 import { TradeCard } from "@/components/trade-card"
 import { ValueProps } from "@/components/value-props"
 import { cities, cityLabel, getCity, trades } from "@/lib/data"
+import type { ContentOverride } from "@/lib/data"
+import contentOverrides from "@/lib/generated-content.json"
 
 type Params = { city: string }
 
@@ -31,6 +33,12 @@ export default async function CityHubPage({ params }: { params: Promise<Params> 
   const city = getCity(citySlug)
 
   if (!city) notFound()
+
+  // Extract marketVibe from content overrides — find first trade override for this city
+  const overrides = contentOverrides[0] as Record<string, ContentOverride> | undefined
+  const marketVibe = trades
+    .map((t) => overrides?.[`${citySlug}-${t.slug.split("-")[0]}`]?.marketVibe)
+    .find(Boolean)
 
   return (
     <>
@@ -86,6 +94,15 @@ export default async function CityHubPage({ params }: { params: Promise<Params> 
       </section>
 
       <ValueProps />
+
+      {marketVibe ? (
+        <section className="bg-secondary">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+            <h2 className="text-2xl font-bold text-foreground">Why We Focus on {city.name}</h2>
+            <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">{marketVibe}</p>
+          </div>
+        </section>
+      ) : null}
 
       <section aria-labelledby="nearby-heading" className="bg-background">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">

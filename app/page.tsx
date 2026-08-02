@@ -52,7 +52,7 @@ export default function HomePage() {
             {trades.map((trade) => (
               <li key={trade.slug}>
                 <Link
-                  href={`/${cities[0].slug}/${trade.slug}`}
+                  href={`/trades/${trade.slug}`}
                   className="group flex items-center gap-3 rounded-md border border-border bg-card px-4 py-4 transition-colors hover:border-accent"
                 >
                   <TradeIcon slug={trade.slug} className="h-6 w-6 shrink-0 text-accent" />

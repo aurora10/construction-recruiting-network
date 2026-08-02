@@ -65,7 +65,6 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
     `Crew size matched to your production schedule — ${trade.averageCrewSize} per crew`,
     "Certificate of insurance provided before mobilization",
     city.majorCounties,
-    getLicenseReq(trade, city.state),
     `References from GCs in the ${city.metro} area on request`,
   ]
 
@@ -171,15 +170,6 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
           </div>
         </div>
       </section>
-
-      {override?.marketVibe ? (
-        <section className="bg-secondary">
-          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-            <h2 className="text-2xl font-bold text-foreground">Why We Focus on {city.name}</h2>
-            <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">{override.marketVibe}</p>
-          </div>
-        </section>
-      ) : null}
 
       {override?.recentPlacements?.length ? (
         <section className="bg-background">

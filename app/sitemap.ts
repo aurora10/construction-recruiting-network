@@ -16,6 +16,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }))
 
+  const globalTradeRoutes = trades.map((trade) => ({
+    url: `${baseUrl}/trades/${trade.slug}`,
+    lastModified: new Date(),
+    priority: 0.8,
+  }))
+
   const tradeRoutes = cities.flatMap((city) =>
     trades.map((trade) => ({
       url: `${baseUrl}/${city.slug}/${trade.slug}`,
@@ -40,5 +46,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   )
 
-  return [...staticRoutes, ...cityRoutes, ...tradeRoutes, ...jobsRoutes, ...joinRoutes]
+  return [...staticRoutes, ...cityRoutes, ...globalTradeRoutes, ...tradeRoutes, ...jobsRoutes, ...joinRoutes]
 }
