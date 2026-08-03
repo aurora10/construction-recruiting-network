@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { BadgeCheck, Building2, ShieldCheck, Users } from "lucide-react"
+import { BadgeCheck, Building2, ShieldCheck } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "About CrewBridge",
   description:
-    "CrewBridge is an independent recruiting business that connects general contractors with pre-vetted, licensed, and insured subcontractor crews. Learn about our origin, mission, and the team behind the network.",
+    "CrewBridge is an independent recruiting business that connects general contractors with pre-vetted, licensed, and insured subcontractor crews. Learn about our origin and mission.",
   alternates: { canonical: "/about" },
 }
 
@@ -73,46 +73,6 @@ export default function AboutPage() {
             </li>
           ))}
         </ul>
-      </section>
-
-      {/* Team */}
-      <section className="mt-16">
-        <h2 className="text-2xl font-black tracking-tight text-foreground">The team behind the network</h2>
-        <p className="mt-4 leading-relaxed text-muted-foreground">
-          CrewBridge is operated by a small team of recruiting professionals who understand construction. We answer the
-          phone, review every submission by hand, and stand behind every placement. No chatbots, no outsourced call
-          centers — just real people who know the trades.
-        </p>
-
-        <div className="mt-8 grid gap-8 sm:grid-cols-2">
-          <div className="flex flex-col items-center rounded-lg border border-border bg-background p-6 text-center">
-            <img
-              src="/placeholder-user.jpg"
-              alt="Team member — replace with actual photo"
-              className="h-28 w-28 rounded-full object-cover border-2 border-accent/30"
-            />
-            <h3 className="mt-4 text-lg font-bold text-foreground">Your Name Here</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Founder & Recruiter</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Replace this placeholder with your actual photo and bio. Google evaluates E-E-A-T signals like real team
-              photos, names, and credentials — swapping in genuine details here builds trust with both GCs and the
-              algorithm.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center rounded-lg border border-border bg-background p-6 text-center">
-            <img
-              src="/placeholder-user.jpg"
-              alt="Team member — replace with actual photo"
-              className="h-28 w-28 rounded-full object-cover border-2 border-accent/30"
-            />
-            <h3 className="mt-4 text-lg font-bold text-foreground">Team Member</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Operations & Vetting</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Add your team member's name, role, and a short sentence about their construction or recruiting background.
-            </p>
-          </div>
-        </div>
       </section>
 
       {/* CTA */}
