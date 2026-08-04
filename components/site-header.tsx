@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { HardHat, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { site } from "@/lib/data"
 import WhatsAppButton from "@/components/whatsapp-button"
 
@@ -10,27 +10,28 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary">
-            <HardHat className="h-5 w-5 text-primary-foreground" aria-hidden="true" />
-          </span>
-          <span className="text-lg font-black uppercase tracking-tight text-foreground">{site.name}</span>
+    <header className="sticky top-0 z-40 border-b border-border bg-background overflow-hidden">
+      <div className="mx-auto flex h-22 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-2 mt-1">
+          <img
+            src="/images/5.png"
+            alt={site.name}
+            className="h-44 w-auto flex-shrink-0 -ml-4"
+          />
         </Link>
 
         {/* Desktop nav (hidden on mobile) */}
-        <div className="hidden items-center gap-3 sm:flex">
+        <div className="hidden items-center gap-2 sm:flex">
           {/* Nav links group */}
           <Link
             href="/about"
-            className="text-sm font-bold text-foreground hover:text-accent transition-colors mr-4"
+            className="text-base font-bold text-foreground hover:text-accent transition-colors mr-2"
           >
             About
           </Link>
           <Link
             href="/how-it-works"
-            className="text-sm font-bold text-foreground hover:text-accent transition-colors"
+            className="text-base font-bold text-foreground hover:text-accent transition-colors mr-4"
           >
             How It Works
           </Link>

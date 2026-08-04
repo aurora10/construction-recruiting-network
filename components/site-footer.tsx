@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, Clock, HardHat, Mail, Phone } from "lucide-react"
+import { ArrowRight, Clock, Mail, Phone } from "lucide-react"
 import { cities, site } from "@/lib/data"
 
 export function SiteFooter() {
@@ -25,8 +25,11 @@ export function SiteFooter() {
         <div className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <HardHat className="h-5 w-5 text-accent" aria-hidden="true" />
-              <span className="text-base font-black uppercase tracking-tight">{site.name}</span>
+              <img
+                src="/images/logo-dark.png"
+                alt={site.name}
+                className="h-35 w-auto"
+              />
             </div>
             <p className="mt-3 text-sm leading-relaxed text-primary-foreground/80">{site.tagline}</p>
           </div>

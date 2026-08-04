@@ -11,7 +11,7 @@ export default function WhatsAppButton({ phoneNumber = "32465811031", compact = 
         href={`https://wa.me/${phoneNumber}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-3 bg-[#e9f7ee] hover:bg-[#d9f0e0] transition-colors px-3.5 py-2 rounded-md border border-transparent"
+        className="flex items-center gap-1 bg-[#e9f7ee] hover:bg-[#d9f0e0] transition-colors px-5 rounded-md h-11 w-36 justify-center"
       >
         {/* WhatsApp Custom SVG Logo (Green Circle + White Phone) */}
         <div className="shrink-0">
