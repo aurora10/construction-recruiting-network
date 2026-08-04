@@ -25,7 +25,7 @@ export function StickyMobileCta() {
           phoneNumber={site.whatsappPhone}
         />
         <a
-          href="#request-crew"
+          href="/#request-crew"
           className="flex h-12 flex-1 items-center justify-center rounded-md bg-accent font-bold text-accent-foreground"
         >
           Request Crew

@@ -4,9 +4,9 @@ import { Clock, Mail, Phone, MessageCircle } from "lucide-react"
 import { site } from "@/lib/data"
 
 export const metadata: Metadata = {
-  title: "Contact CrewBridge",
+  title: "Contact CrewNetUSA",
   description:
-    "Get in touch with the CrewBridge team. Reach us by phone or email for crew requests, network inquiries, or general questions. We are an online recruiting service — no walk-in office.",
+    "Get in touch with the CrewNetUSA team. Reach us by phone or email for crew requests, network inquiries, or general questions. We are an online recruiting service — no walk-in office.",
   alternates: { canonical: "/contact" },
 }
 
@@ -17,7 +17,7 @@ export default function ContactPage() {
         Talk to a real person — not a bot.
       </h1>
       <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-        CrewBridge is an online recruiting service. We don't have a walk-in office, but we answer every call and email
+        CrewNetUSA is an online recruiting service. We don't have a walk-in office, but we answer every call and email
         directly. Whether you need a crew tomorrow or just want to understand how the network works, reach out.
       </p>
 
@@ -72,7 +72,7 @@ export default function ContactPage() {
           <div>
             <h2 className="text-base font-bold text-foreground">We're an online service</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              CrewBridge operates entirely online — we don't maintain a public office or walk-in location. This keeps our
+              CrewNetUSA operates entirely online — we don't maintain a public office or walk-in location. This keeps our
               overhead low and our finder's fee affordable. All communication happens by phone and email, and every crew
               placement is confirmed in writing.
             </p>

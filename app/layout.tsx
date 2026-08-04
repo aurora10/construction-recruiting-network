@@ -45,7 +45,7 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: site.name,
-  url: 'https://crewbridge.com',
+  url: 'https://crewnetusa.com',
   description:
     'Connect with pre-vetted, licensed, and insured subcontractor crews. Framing, drywall, electrical, plumbing, concrete, roofing and more.',
   telephone: site.phoneDisplay,

@@ -39,7 +39,7 @@ export function SiteHeader() {
           <div className="flex items-center gap-3 pl-3 border-l border-border">
             <WhatsAppButton phoneNumber={site.whatsappPhone} compact />
             <a
-              href="#request-crew"
+              href="/#request-crew"
               className="flex h-11 items-center rounded-md bg-accent px-5 font-bold text-accent-foreground transition-colors hover:brightness-95"
             >
               Request a Crew
@@ -80,7 +80,7 @@ export function SiteHeader() {
             <div className="flex items-stretch gap-3 pt-2">
               <WhatsAppButton phoneNumber={site.whatsappPhone} />
               <a
-                href="#request-crew"
+                href="/#request-crew"
                 className="flex flex-1 h-11 items-center justify-center rounded-md bg-accent font-bold text-accent-foreground transition-colors hover:brightness-95"
                 onClick={() => setMenuOpen(false)}
               >

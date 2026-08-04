@@ -5,7 +5,7 @@ import { ClipboardList, Search, PenTool, HardHat, DollarSign } from "lucide-reac
 export const metadata: Metadata = {
   title: "How It Works",
   description:
-    "Submit a crew request, get matched with a vetted subcontractor, sign a direct subcontract, and work begins. Learn how CrewBridge's flat finder's fee works — no subscription, no per-lead charges.",
+    "Submit a crew request, get matched with a vetted subcontractor, sign a direct subcontract, and work begins. Learn how CrewNetUSA's flat finder's fee works — no subscription, no per-lead charges.",
   alternates: { canonical: "/how-it-works" },
 }
 
@@ -26,7 +26,7 @@ const steps = [
     step: 3,
     icon: PenTool,
     title: "You Sign the Sub",
-    body: "If you approve the match, you contract directly with the subcontractor on your own terms. CrewBridge is not a party to your subcontract — we simply make the introduction.",
+    body: "If you approve the match, you contract directly with the subcontractor on your own terms. CrewNetUSA is not a party to your subcontract — we simply make the introduction.",
   },
   {
     step: 4,
@@ -43,7 +43,7 @@ export default function HowItWorksPage() {
         Four steps from request to boots on the ground.
       </h1>
       <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-        CrewBridge is not a job board and not a staffing agency. It's a pre-vetted network. You submit what you need, we
+        CrewNetUSA is not a job board and not a staffing agency. It's a pre-vetted network. You submit what you need, we
         match you with a qualified crew, and you contract directly with them. Here's exactly how it works.
       </p>
 
@@ -84,7 +84,7 @@ export default function HowItWorksPage() {
           <div className="rounded-md border border-border bg-muted/30 p-4">
             <h3 className="text-sm font-bold text-foreground">You pay only on placement</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              There is no subscription, no monthly retainer, and no charge to submit a request. CrewBridge earns a flat
+              There is no subscription, no monthly retainer, and no charge to submit a request. CrewNetUSA earns a flat
               finder's fee only when a crew is successfully placed on your project and work begins.
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function HowItWorksPage() {
           <div className="rounded-md border border-border bg-muted/30 p-4">
             <h3 className="text-sm font-bold text-foreground">You contract directly with the crew</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              CrewBridge is not a middleman in your subcontract. You set your own rates, terms, and scope with the crew.
+              CrewNetUSA is not a middleman in your subcontract. You set your own rates, terms, and scope with the crew.
               We simply make the connection and confirm that both parties are satisfied after placement.
             </p>
           </div>

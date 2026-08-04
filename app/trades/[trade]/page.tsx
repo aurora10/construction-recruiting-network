@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!trade) return {}
 
   return {
-    title: `${trade.name} — National Subcontractor Network | CrewBridge`,
+    title: `${trade.name} — National Subcontractor Network | CrewNetUSA`,
     description: `We staff ${trade.name.toLowerCase()} in ${cities.length} markets across the US. Pre-vetted, insured crews ready to bid. Select your market to see available crews.`,
     alternates: { canonical: `/trades/${trade.slug}` },
   }

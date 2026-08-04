@@ -3,9 +3,9 @@ import Link from "next/link"
 import { BadgeCheck, Building2, ShieldCheck } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "About CrewBridge",
+  title: "About CrewNetUSA",
   description:
-    "CrewBridge is an independent recruiting business that connects general contractors with pre-vetted, licensed, and insured subcontractor crews. Learn about our origin and mission.",
+    "CrewNetUSA is an independent recruiting business that connects general contractors with pre-vetted, licensed, and insured subcontractor crews. Learn about our origin and mission.",
   alternates: { canonical: "/about" },
 }
 
@@ -32,22 +32,22 @@ export default function AboutPage() {
     <article className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:py-20">
       {/* Hero title */}
       <h1 className="text-4xl font-black tracking-tight text-foreground text-balance sm:text-5xl">
-        We built CrewBridge to take the guesswork out of hiring subcontractors.
+        We built CrewNetUSA to take the guesswork out of hiring subcontractors.
       </h1>
       <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
         General contractors waste hours cold-calling crews, chasing availability, and hoping the team that shows up is
-        actually qualified. CrewBridge replaces that friction with a pre-vetted network and a single point of contact.
+        actually qualified. CrewNetUSA replaces that friction with a pre-vetted network and a single point of contact.
       </p>
 
       {/* Origin Story */}
       <section className="mt-16">
-        <h2 className="text-2xl font-black tracking-tight text-foreground">How CrewBridge started</h2>
+        <h2 className="text-2xl font-black tracking-tight text-foreground">How CrewNetUSA started</h2>
         <p className="mt-4 leading-relaxed text-muted-foreground">
           After years of watching general contractors struggle through the same problem —{" "}
           <strong className="text-foreground">
             too many unqualified leads, too little reliable capacity
           </strong>{" "}
-          — we knew there had to be a better way. CrewBridge began as a simple idea: build a standing network of
+          — we knew there had to be a better way. CrewNetUSA began as a simple idea: build a standing network of
           licensed, insured trade crews that GCs could tap on demand, without the noise of a public job board.
         </p>
         <p className="mt-3 leading-relaxed text-muted-foreground">
@@ -60,7 +60,7 @@ export default function AboutPage() {
 
       {/* Trust Signals */}
       <section className="mt-16">
-        <h2 className="text-2xl font-black tracking-tight text-foreground">What makes CrewBridge different</h2>
+        <h2 className="text-2xl font-black tracking-tight text-foreground">What makes CrewNetUSA different</h2>
         <ul className="mt-8 grid gap-6 sm:grid-cols-3">
           {trustSignals.map((signal) => (
             <li
