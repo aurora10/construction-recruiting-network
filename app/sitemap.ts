@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next"
 import { cities, trades } from "@/lib/data"
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://crewbridge.example.com"
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://crewnetusa.com"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = ["", "/about", "/contact", "/how-it-works", "/join-network", "/privacy", "/terms"].map((path) => ({
