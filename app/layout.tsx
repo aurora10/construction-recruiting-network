@@ -10,6 +10,7 @@ import './globals.css'
 const _inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://crewnetusa.com'),
   title: {
     default: `${site.name} — Vetted Subcontractor Crews for General Contractors`,
     template: `%s | ${site.name}`,

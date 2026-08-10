@@ -12,6 +12,10 @@ const stats = [
   { value: "10", label: "Metro markets served" },
 ]
 
+export const metadata = {
+  alternates: { canonical: '/' },
+}
+
 export default function HomePage() {
   return (
     <>
