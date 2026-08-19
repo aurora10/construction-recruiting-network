@@ -44,7 +44,7 @@ export default async function JobsTradePage({ params }: { params: Promise<Params
         eyebrow={`Subcontractor Opportunities in ${cityLabel(city)}`}
         heading={
           <>
-            {trade.name} Opportunities in{" "}
+            Commercial {trade.name} Opportunities in{" "}
             <span className="text-accent">{city.name}, {city.state}</span>.
           </>
         }

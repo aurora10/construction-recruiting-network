@@ -44,7 +44,7 @@ export default async function JoinTradePage({ params }: { params: Promise<Params
         eyebrow={`For ${cityLabel(city)} subcontractors`}
         heading={
           <>
-            Keep your {trade.singular.toLowerCase()} booked solid in{" "}
+            Keep your commercial {trade.singular.toLowerCase()} booked solid in{" "}
             <span className="text-accent">{city.name}</span>.
           </>
         }

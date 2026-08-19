@@ -101,7 +101,7 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
         eyebrow={`${cityLabel(city)} · ${city.metro}`}
         heading={
           <>
-            Reliable {trade.name} in <span className="text-accent">{city.name}</span>.
+            Reliable Commercial {trade.name} in <span className="text-accent">{city.name}</span>.
           </>
         }
         subheading={
