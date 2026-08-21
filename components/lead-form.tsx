@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState, useRef } from "react"
+import { useActionState, useState } from "react"
 import { CircleCheckBig, Phone } from "lucide-react"
 import { submitLead, type LeadState } from "@/app/actions"
 import { site } from "@/lib/data"
@@ -25,8 +25,8 @@ export function LeadForm({
   subheading?: string
 }) {
   const [state, formAction, pending] = useActionState(submitLead, initialState)
-  const renderTimeRef = useRef(Date.now())
-  const turnstileRef = useRef<string>("")
+  const [renderTime] = useState(() => Date.now())
+  const [turnstileToken, setTurnstileToken] = useState("")
 
   const options = projectTypes ?? [
     "Single-family residential",
@@ -69,7 +69,7 @@ export function LeadForm({
         {city ? <input type="hidden" name="city" value={city} /> : null}
 
         {/* Layer 2 — Timestamp hidden field */}
-        <input type="hidden" name="formRenderTime" value={renderTimeRef.current} />
+        <input type="hidden" name="formRenderTime" value={renderTime} />
 
         {/* Layer 1 — Honeypot field (visually hidden, bots fill it) */}
         <input
@@ -151,15 +151,15 @@ export function LeadForm({
         {/* Layer 4 — Cloudflare Turnstile (invisible, only if configured) */}
         {turnstileSiteKey ? (
           <>
-            <input type="hidden" name="turnstileToken" value={turnstileRef.current} />
+            <input type="hidden" name="turnstileToken" value={turnstileToken} />
             <Turnstile
               siteKey={turnstileSiteKey}
               options={{ size: "invisible" }}
               onSuccess={(token) => {
-                turnstileRef.current = token
+                setTurnstileToken(token)
               }}
               onExpire={() => {
-                turnstileRef.current = ""
+                setTurnstileToken("")
               }}
             />
           </>

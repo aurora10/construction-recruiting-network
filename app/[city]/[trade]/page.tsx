@@ -8,9 +8,8 @@ import { InternalLinks } from "@/components/internal-links"
 import { LeadForm } from "@/components/lead-form"
 import { TradeIcon } from "@/components/trade-card"
 import { ValueProps } from "@/components/value-props"
-import { cities, cityLabel, getCity, getLicenseReq, getTrade, site, trades } from "@/lib/data"
-import type { ContentOverride } from "@/lib/data"
-import contentOverrides from "@/lib/generated-content.json"
+import { getContentOverride } from "@/lib/content"
+import { cities, cityLabel, getCity, getTrade, site, trades } from "@/lib/data"
 
 type Params = { city: string; trade: string }
 
@@ -31,7 +30,6 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   }
 }
 
-
 export default async function TradeLandingPage({ params }: { params: Promise<Params> }) {
   const { city: citySlug, trade: tradeSlug } = await params
   const city = getCity(citySlug)
@@ -39,9 +37,7 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
 
   if (!city || !trade) notFound()
 
-  const contentKey = `${citySlug}-${tradeSlug.split("-")[0]}`
-  const override: ContentOverride | undefined =
-    contentOverrides[0]?.[contentKey as keyof (typeof contentOverrides)[0]]
+  const override = getContentOverride(citySlug, tradeSlug)
 
   const isDev = process.env.NODE_ENV === "development"
   const showDevWarning = isDev && !override
@@ -60,13 +56,6 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
     },
     description: `Hire pre-vetted ${trade.name.toLowerCase()} in ${cityLabel(city)}. Licensed, insured, and ready to bid. Request available crews in under 60 seconds.`,
   }
-
-  const scopeChecklist = [
-    `Crew size matched to your production schedule — ${trade.averageCrewSize} per crew`,
-    "Certificate of insurance provided before mobilization",
-    city.majorCounties,
-    `References from GCs in the ${city.metro} area on request`,
-  ]
 
   return (
     <>
@@ -93,7 +82,7 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
       {showDevWarning ? (
         <div className="bg-red-600 text-white text-center text-sm font-bold py-2 px-4">
           ⚠️ Generic SEO Content — Update JSON (missing key:{" "}
-          <code className="bg-red-800 px-1.5 py-0.5 rounded text-xs">{contentKey}</code>)
+          <code className="bg-red-800 px-1.5 py-0.5 rounded text-xs">{`${citySlug}-${tradeSlug.split("-")[0]}`}</code>)
         </div>
       ) : null}
 
@@ -127,6 +116,15 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
         </section>
       ) : null}
 
+      {override?.marketVibe ? (
+        <section className="bg-secondary">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+            <h2 className="text-2xl font-bold text-foreground">Market snapshot</h2>
+            <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">{override.marketVibe}</p>
+          </div>
+        </section>
+      ) : null}
+
       <ValueProps />
 
       <section className="bg-background">
@@ -152,7 +150,7 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
           <div className="rounded-lg border border-border bg-secondary p-6 sm:p-8">
             <h3 className="text-xl font-bold text-foreground">Every referral includes</h3>
             <ul className="mt-5 flex flex-col gap-4">
-              {(override?.compliance ?? scopeChecklist).map((item) => (
+              {(override?.compliance ?? []).map((item) => (
                 <li key={item} className="flex items-start gap-3 leading-relaxed text-foreground">
                   <CircleCheckBig className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
                   {item}

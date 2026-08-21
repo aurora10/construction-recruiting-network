@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState, useRef } from "react"
+import { useActionState, useState } from "react"
 import { CircleCheckBig, Phone } from "lucide-react"
 import { submitSubApplication, type LeadState } from "@/app/actions"
 import { site } from "@/lib/data"
@@ -25,7 +25,7 @@ export function SubApplyForm({
   subheading?: string
 }) {
   const [state, formAction, pending] = useActionState(submitSubApplication, initialState)
-  const renderTimeRef = useRef(Date.now())
+  const [renderTime] = useState(() => Date.now())
 
   if (state.status === "success") {
     return (
@@ -58,7 +58,7 @@ export function SubApplyForm({
         {city ? <input type="hidden" name="city" value={city} /> : null}
 
         {/* Layer 2 — Timestamp hidden field */}
-        <input type="hidden" name="formRenderTime" value={renderTimeRef.current} />
+        <input type="hidden" name="formRenderTime" value={renderTime} />
 
         {/* Layer 1 — Honeypot field (visually hidden, bots fill it) */}
         <input

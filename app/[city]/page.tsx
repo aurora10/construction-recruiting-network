@@ -6,9 +6,7 @@ import { Hero } from "@/components/hero"
 import { LeadForm } from "@/components/lead-form"
 import { TradeCard } from "@/components/trade-card"
 import { ValueProps } from "@/components/value-props"
-import { cities, cityLabel, getCity, trades } from "@/lib/data"
-import type { ContentOverride } from "@/lib/data"
-import contentOverrides from "@/lib/generated-content.json"
+import { cities, cityLabel, getCity, trades, type City } from "@/lib/data"
 
 type Params = { city: string }
 
@@ -34,11 +32,16 @@ export default async function CityHubPage({ params }: { params: Promise<Params> 
 
   if (!city) notFound()
 
-  // Extract marketVibe from content overrides — find first trade override for this city
-  const overrides = contentOverrides[0] as Record<string, ContentOverride> | undefined
-  const marketVibe = trades
-    .map((t) => overrides?.[`${citySlug}-${t.slug.split("-")[0]}`]?.marketVibe)
-    .find(Boolean)
+  const parentCity = city.parentMetro ? getCity(city.parentMetro) : undefined
+  const relatedCities: City[] =
+    city.type === "metro-hub"
+      ? (city.nearbySuburbs?.map((slug) => getCity(slug)).filter((c): c is City => Boolean(c)) ?? [])
+      : city.parentMetro
+        ? cities.filter((c): c is City => c.parentMetro === city.parentMetro && c.slug !== city.slug)
+        : []
+
+  const relatedHeading =
+    city.type === "metro-hub" ? `Suburbs served from ${city.name}` : `Markets near ${city.name}`
 
   return (
     <>
@@ -95,22 +98,24 @@ export default async function CityHubPage({ params }: { params: Promise<Params> 
 
       <ValueProps />
 
-      {marketVibe ? (
-        <section className="bg-secondary">
-          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-            <h2 className="text-2xl font-bold text-foreground">Why We Focus on {city.name}</h2>
-            <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">{marketVibe}</p>
-          </div>
-        </section>
-      ) : null}
-
       <section aria-labelledby="nearby-heading" className="bg-background">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
           <h2 id="nearby-heading" className="text-2xl font-bold text-foreground">
-            Nearby markets
+            {relatedHeading}
           </h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-3">
-            {city.nearby.map((n) => (
+            {parentCity ? (
+              <li>
+                <Link
+                  href={`/${parentCity.slug}`}
+                  className="flex items-center gap-2 rounded-md border border-border bg-card px-4 py-4 font-bold text-foreground hover:border-accent hover:text-accent"
+                >
+                  <MapPin className="h-5 w-5 text-accent" aria-hidden="true" />
+                  {parentCity.name} hub
+                </Link>
+              </li>
+            ) : null}
+            {relatedCities.map((n) => (
               <li key={n.slug}>
                 <Link
                   href={`/${n.slug}`}

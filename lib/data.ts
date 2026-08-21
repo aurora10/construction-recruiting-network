@@ -20,14 +20,27 @@ export type Trade = {
   stateLicenseRequirement: Record<string, string>
 }
 
+export type LocationType = 'metro-hub' | 'suburb'
+
 export type City = {
   slug: string
   name: string
   state: string
   metro: string
-  nearby: { slug: string; name: string }[]
+  type: LocationType
+  parentMetro?: string
+  nearbySuburbs?: string[]
   majorCounties: string
   localMarketStat: string
+}
+
+export type ContentOverride = {
+  heroSubheading?: string
+  uniqueParagraph?: string
+  expertise?: string[]
+  compliance?: string[]
+  marketVibe?: string
+  recentPlacements?: string[]
 }
 
 export const trades: Trade[] = [
@@ -35,8 +48,7 @@ export const trades: Trade[] = [
     slug: "framing-subcontractors",
     name: "Framing Subcontractors",
     singular: "Framing Crew",
-    blurb:
-      "Rough carpentry crews for stick-built and panelized residential, multifamily, and light commercial framing.",
+    blurb: "Rough carpentry crews for stick-built and panelized residential, multifamily, and light commercial framing.",
     projectTypes: ["Single-family residential", "Multifamily / Apartments", "Light commercial", "Remodel / Addition"],
     subBenefits: [
       "Crews sized to your production schedule — 3-man, 4-man, or full-squad matches",
@@ -59,8 +71,7 @@ export const trades: Trade[] = [
     slug: "drywall-subcontractors",
     name: "Drywall Subcontractors",
     singular: "Drywall Crew",
-    blurb:
-      "Hang, tape, finish, and texture crews sized for punch-list repairs up to full-building multifamily turns.",
+    blurb: "Hang, tape, finish, and texture crews sized for punch-list repairs up to full-building multifamily turns.",
     projectTypes: ["Single-family residential", "Multifamily / Apartments", "Tenant improvement", "Repair / Patchwork"],
     subBenefits: [
       "Hang-tape-finish crews matched to job square footage and timeline",
@@ -75,7 +86,7 @@ export const trades: Trade[] = [
       SC: "In South Carolina, drywall subcontractors need a SC Residential Builders License for projects over $5,000. We verify this for you.",
       GA: "In Georgia, drywall contractors on projects over $2,500 need a GA Residential Basic Contractor license. We verify this for you.",
       TN: "In Tennessee, drywall subs need a TN Home Improvement License for remodeling jobs and a contractor's license for new construction over $25,000. We verify this for you.",
-      TX: "In Texas, drywall subcontractors generally work under the GC's license; no standalone drywall license is required at the state level. We verify this for you.",
+      TX: "In Texas, drywall subcontractors generally work under the GC's license. We verify this for you.",
       AZ: "In Arizona, drywall contractors on jobs over $1,000 require an AZ Registrar of Contractors license (R-10). We verify this for you.",
     },
   },
@@ -83,8 +94,7 @@ export const trades: Trade[] = [
     slug: "electrical-contractors",
     name: "Electrical Contractors",
     singular: "Electrical Crew",
-    blurb:
-      "Licensed electricians and journeyman-led crews for rough-in, trim-out, service upgrades, and inspections.",
+    blurb: "Licensed electricians and journeyman-led crews for rough-in, trim-out, service upgrades, and inspections.",
     projectTypes: ["Residential rough-in", "Commercial build-out", "Service upgrade", "Troubleshooting / Repair"],
     subBenefits: [
       "Master electrician and journeyman-led crews only — no unlicensed labor",
@@ -95,12 +105,12 @@ export const trades: Trade[] = [
     ],
     averageCrewSize: "2–5 men",
     stateLicenseRequirement: {
-      NC: "In North Carolina, electrical contractors must hold a NC State Board of Electrical Examiners license (Limited, Intermediate, or Unlimited). We verify this for you.",
-      SC: "In South Carolina, electricians must hold a SC Contractor's Licensing Board electrical license (Residential or Commercial). We verify this for you.",
-      GA: "In Georgia, electrical contractors must hold a GA State Board of Electrical Contractors license (Class I or Class II). We verify this for you.",
-      TN: "In Tennessee, electrical contractors need a TN Board for Licensing Contractors electrical license (L.L.E. or C.E.). We verify this for you.",
-      TX: "In Texas, HVAC subs must hold a TDLR license. We verify this for you.",
-      AZ: "In Arizona, electrical contractors must hold an AZ Registrar of Contractors license (R-11, C-11, or K-11). We verify this for you.",
+      NC: "In North Carolina, electrical contractors must hold a NC State Board of Electrical Examiners license. We verify this for you.",
+      SC: "In South Carolina, electricians must hold a SC Contractor's Licensing Board electrical license. We verify this for you.",
+      GA: "In Georgia, electrical contractors must hold a GA State Board of Electrical Contractors license. We verify this for you.",
+      TN: "In Tennessee, electrical contractors need a TN Board for Licensing Contractors electrical license. We verify this for you.",
+      TX: "In Texas, electrical subs must hold a TDLR license. We verify this for you.",
+      AZ: "In Arizona, electrical contractors must hold an AZ Registrar of Contractors license. We verify this for you.",
     },
   },
   {
@@ -118,12 +128,12 @@ export const trades: Trade[] = [
     ],
     averageCrewSize: "2–5 men",
     stateLicenseRequirement: {
-      NC: "In North Carolina, plumbing contractors must hold a NC State Board of Examiners of Plumbing, Heating & Fire Sprinklers license. We verify this for you.",
+      NC: "In North Carolina, plumbing contractors must hold a NC State Board of Examiners of Plumbing license. We verify this for you.",
       SC: "In South Carolina, plumbers must hold a SC Contractor's Licensing Board plumbing license. We verify this for you.",
-      GA: "In Georgia, plumbing contractors must hold a GA State Construction Industry Licensing Board Master Plumber license. We verify this for you.",
+      GA: "In Georgia, plumbing contractors must hold a GA Master Plumber license. We verify this for you.",
       TN: "In Tennessee, plumbing contractors need a TN Board for Licensing Contractors plumbing license. We verify this for you.",
-      TX: "In Texas, plumbing contractors must hold a Texas State Board of Plumbing Examiners license (Tradesman, Journeyman, or Master). We verify this for you.",
-      AZ: "In Arizona, plumbing contractors must hold an AZ Registrar of Contractors license (R-37, C-37, or C-37R). We verify this for you.",
+      TX: "In Texas, plumbing contractors must hold a Texas State Board of Plumbing Examiners license. We verify this for you.",
+      AZ: "In Arizona, plumbing contractors must hold an AZ Registrar of Contractors license. We verify this for you.",
     },
   },
   {
@@ -141,12 +151,12 @@ export const trades: Trade[] = [
     ],
     averageCrewSize: "4–10 men",
     stateLicenseRequirement: {
-      NC: "In North Carolina, concrete contractors on jobs over $30,000 need a NC General Contractors License. We verify this for you.",
-      SC: "In South Carolina, concrete subcontractors need a SC Residential Builders License for projects over $5,000. We verify this for you.",
-      GA: "In Georgia, concrete contractors on projects over $2,500 need a GA Residential Basic Contractor license. We verify this for you.",
-      TN: "In Tennessee, concrete subs need a TN contractor's license for jobs over $25,000. We verify this for you.",
-      TX: "In Texas, concrete contractors generally work under the GC's license; no standalone concrete license at the state level. We verify this for you.",
-      AZ: "In Arizona, concrete contractors on jobs over $1,000 require an AZ Registrar of Contractors license (R-4, C-4, or K-4). We verify this for you.",
+      NC: "In NC, concrete contractors on jobs over $30,000 need a General Contractors License. We verify this for you.",
+      SC: "In SC, concrete subcontractors need a Residential Builders License for projects over $5,000. We verify this for you.",
+      GA: "In GA, concrete contractors on projects over $2,500 need a Residential Basic Contractor license. We verify this for you.",
+      TN: "In TN, concrete subs need a contractor's license for jobs over $25,000. We verify this for you.",
+      TX: "In TX, concrete contractors generally work under the GC's license. We verify this for you.",
+      AZ: "In AZ, concrete contractors on jobs over $1,000 require an AZ Registrar of Contractors license. We verify this for you.",
     },
   },
   {
@@ -164,12 +174,12 @@ export const trades: Trade[] = [
     ],
     averageCrewSize: "3–7 men",
     stateLicenseRequirement: {
-      NC: "In North Carolina, roofing contractors on jobs over $30,000 need a NC General Contractors License. We verify this for you.",
-      SC: "In South Carolina, roofing contractors need a SC Residential Builders License for projects over $5,000. We verify this for you.",
-      GA: "In Georgia, roofing contractors on projects over $2,500 need a GA Residential Basic Contractor license. We verify this for you.",
-      TN: "In Tennessee, roofing contractors need a TN contractor's license for jobs over $25,000. We verify this for you.",
-      TX: "In Texas, roofing contractors generally work under the GC's license; no standalone roofing license required at the state level. We verify this for you.",
-      AZ: "In Arizona, roofing contractors on jobs over $1,000 require an AZ Registrar of Contractors license (R-42, C-42, or CR-42). We verify this for you.",
+      NC: "In NC, roofing contractors on jobs over $30,000 need a General Contractors License. We verify this for you.",
+      SC: "In SC, roofing contractors need a Residential Builders License for projects over $5,000. We verify this for you.",
+      GA: "In GA, roofing contractors on projects over $2,500 need a Residential Basic Contractor license. We verify this for you.",
+      TN: "In TN, roofing contractors need a contractor's license for jobs over $25,000. We verify this for you.",
+      TX: "In TX, roofing contractors generally work under the GC's license. We verify this for you.",
+      AZ: "In AZ, roofing contractors on jobs over $1,000 require an AZ Registrar of Contractors license. We verify this for you.",
     },
   },
   {
@@ -187,12 +197,12 @@ export const trades: Trade[] = [
     ],
     averageCrewSize: "2–4 men",
     stateLicenseRequirement: {
-      NC: "In North Carolina, painting contractors on jobs over $30,000 need a NC General Contractors License. We verify this for you.",
-      SC: "In South Carolina, painting subcontractors need a SC Residential Builders License for projects over $5,000. We verify this for you.",
-      GA: "In Georgia, painting contractors on projects over $2,500 need a GA Residential Basic Contractor license. We verify this for you.",
-      TN: "In Tennessee, painting contractors need a TN Home Improvement License for remodeling jobs and a contractor's license for new construction over $25,000. We verify this for you.",
-      TX: "In Texas, painting contractors generally work under the GC's license; no standalone painting license required at the state level. We verify this for you.",
-      AZ: "In Arizona, painting contractors on jobs over $1,000 require an AZ Registrar of Contractors license (R-34 or C-34). We verify this for you.",
+      NC: "In NC, painting contractors on jobs over $30,000 need a General Contractors License. We verify this for you.",
+      SC: "In SC, painting subcontractors need a Residential Builders License for projects over $5,000. We verify this for you.",
+      GA: "In GA, painting contractors on projects over $2,500 need a Residential Basic Contractor license. We verify this for you.",
+      TN: "In TN, painting contractors need a Home Improvement License. We verify this for you.",
+      TX: "In TX, painting contractors generally work under the GC's license. We verify this for you.",
+      AZ: "In AZ, painting contractors on jobs over $1,000 require an AZ Registrar of Contractors license. We verify this for you.",
     },
   },
   {
@@ -210,147 +220,76 @@ export const trades: Trade[] = [
     ],
     averageCrewSize: "2–4 men",
     stateLicenseRequirement: {
-      NC: "In North Carolina, HVAC contractors must hold a NC State Board of Examiners of Plumbing, Heating & Fire Sprinklers license (H-2 or H-3 classification). We verify this for you.",
+      NC: "In North Carolina, HVAC contractors must hold a NC State Board of Examiners license. We verify this for you.",
       SC: "In South Carolina, HVAC contractors must hold a SC Contractor's Licensing Board mechanical license. We verify this for you.",
-      GA: "In Georgia, HVAC contractors must hold a GA State Construction Industry Licensing Board Conditioned Air Contractor license. We verify this for you.",
-      TN: "In Tennessee, HVAC contractors need a TN Board for Licensing Contractors mechanical license. We verify this for you.",
+      GA: "In Georgia, HVAC contractors must hold a GA Conditioned Air Contractor license. We verify this for you.",
+      TN: "In Tennessee, HVAC contractors need a TN Board mechanical license. We verify this for you.",
       TX: "In Texas, HVAC subs must hold a TDLR license. We verify this for you.",
-      AZ: "In Arizona, HVAC contractors must hold an AZ Registrar of Contractors license (R-39, C-39, or CR-39). We verify this for you.",
+      AZ: "In Arizona, HVAC contractors must hold an AZ Registrar of Contractors license. We verify this for you.",
     },
   },
 ]
 
 export const cities: City[] = [
-  {
-    slug: "raleigh",
-    name: "Raleigh",
-    state: "NC",
-    metro: "Research Triangle",
-    nearby: [
-      { slug: "durham", name: "Durham" },
-      { slug: "charlotte", name: "Charlotte" },
-      { slug: "greensboro", name: "Greensboro" },
-    ],
-    majorCounties: "Serving Wake, Durham, and Orange counties.",
-    localMarketStat: "With over 12,000 new single-family permits pulled in the Triangle this year and a 15% year-over-year increase in multifamily starts, subcontractor availability is tighter than ever.",
-  },
-  {
-    slug: "durham",
-    name: "Durham",
-    state: "NC",
-    metro: "Research Triangle",
-    nearby: [
-      { slug: "raleigh", name: "Raleigh" },
-      { slug: "greensboro", name: "Greensboro" },
-      { slug: "charlotte", name: "Charlotte" },
-    ],
-    majorCounties: "Serving Durham, Wake, and Orange counties.",
-    localMarketStat: "Durham County alone issued over 3,800 residential permits last year. With the downtown revitalization adding 2,000+ multifamily units annually, drywall and electrical crews are in high demand.",
-  },
-  {
-    slug: "charlotte",
-    name: "Charlotte",
-    state: "NC",
-    metro: "Charlotte Metro",
-    nearby: [
-      { slug: "raleigh", name: "Raleigh" },
-      { slug: "greenville", name: "Greenville" },
-      { slug: "durham", name: "Durham" },
-    ],
-    majorCounties: "Serving Mecklenburg, Union, Cabarrus, and Gaston counties.",
-    localMarketStat: "Charlotte is the fastest-growing metro in the Carolinas with over 18,000 housing starts in the past 12 months. GCs report 6–8 week backlogs for framing and concrete crews across Mecklenburg County.",
-  },
-  {
-    slug: "greensboro",
-    name: "Greensboro",
-    state: "NC",
-    metro: "Piedmont Triad",
-    nearby: [
-      { slug: "durham", name: "Durham" },
-      { slug: "charlotte", name: "Charlotte" },
-      { slug: "raleigh", name: "Raleigh" },
-    ],
-    majorCounties: "Serving Guilford, Forsyth, Alamance, and Randolph counties.",
-    localMarketStat: "The Piedmont Triad posted a 22% increase in commercial building permits last quarter. With Toyota's battery plant driving thousands of new housing starts, every trade from concrete to HVAC is stretched thin.",
-  },
-  {
-    slug: "greenville",
-    name: "Greenville",
-    state: "SC",
-    metro: "Upstate",
-    nearby: [
-      { slug: "charlotte", name: "Charlotte" },
-      { slug: "atlanta", name: "Atlanta" },
-      { slug: "greensboro", name: "Greensboro" },
-    ],
-    majorCounties: "Serving Greenville, Spartanburg, Anderson, and Pickens counties.",
-    localMarketStat: "The Upstate is booming — Greenville County alone recorded 5,200 new residential permits this year, a 19% jump. Roofing and framing crews are booking 4–6 weeks out across the I-85 corridor.",
-  },
-  {
-    slug: "atlanta",
-    name: "Atlanta",
-    state: "GA",
-    metro: "Metro Atlanta",
-    nearby: [
-      { slug: "greenville", name: "Greenville" },
-      { slug: "charlotte", name: "Charlotte" },
-      { slug: "nashville", name: "Nashville" },
-    ],
-    majorCounties: "Serving Fulton, Cobb, Gwinnett, DeKalb, and Forsyth counties.",
-    localMarketStat: "Metro Atlanta is on pace for 35,000+ new housing units this year across the 29-county MSA. GCs in Cobb and Gwinnett counties report critical shortages of electrical and plumbing crews for production builds.",
-  },
-  {
-    slug: "nashville",
-    name: "Nashville",
-    state: "TN",
-    metro: "Middle Tennessee",
-    nearby: [
-      { slug: "atlanta", name: "Atlanta" },
-      { slug: "charlotte", name: "Charlotte" },
-      { slug: "dallas", name: "Dallas" },
-    ],
-    majorCounties: "Serving Davidson, Williamson, Rutherford, and Sumner counties.",
-    localMarketStat: "Nashville added 98 new residents per day last year. With 16,000+ residential permits pulled across Middle Tennessee, framing and concrete crews are in critical shortage — some GCs are paying 20% above market rates.",
-  },
-  {
-    slug: "dallas",
-    name: "Dallas",
-    state: "TX",
-    metro: "DFW Metroplex",
-    nearby: [
-      { slug: "austin", name: "Austin" },
-      { slug: "nashville", name: "Nashville" },
-      { slug: "phoenix", name: "Phoenix" },
-    ],
-    majorCounties: "Serving Dallas, Collin, Denton, Tarrant, and Rockwall counties.",
-    localMarketStat: "DFW leads the nation in housing starts with over 68,000 new units permitted this year. The northern suburbs in Collin and Denton counties are so backlogged that GCs are importing crews from Oklahoma and Louisiana.",
-  },
-  {
-    slug: "austin",
-    name: "Austin",
-    state: "TX",
-    metro: "Central Texas",
-    nearby: [
-      { slug: "dallas", name: "Dallas" },
-      { slug: "phoenix", name: "Phoenix" },
-      { slug: "nashville", name: "Nashville" },
-    ],
-    majorCounties: "Serving Travis, Williamson, Hays, and Bastrop counties.",
-    localMarketStat: "Austin construction employment grew 8% year-over-year, but demand still outpaces supply. With 22,000+ residential permits pulled in Central Texas, HVAC and electrical subs can command premium rates year-round.",
-  },
-  {
-    slug: "phoenix",
-    name: "Phoenix",
-    state: "AZ",
-    metro: "Valley of the Sun",
-    nearby: [
-      { slug: "dallas", name: "Dallas" },
-      { slug: "austin", name: "Austin" },
-      { slug: "atlanta", name: "Atlanta" },
-    ],
-    majorCounties: "Serving Maricopa, Pinal, and Yavapai counties.",
-    localMarketStat: "Phoenix remains one of the top 3 housing markets in the country with 31,000+ single-family permits this year. The West Valley and Pinal County submarkets are especially underserved — roofing and drywall crews can fill their calendars 12 months a year.",
-  },
+  // --- RALEIGH HUB & SPOKES ---
+  { slug: "raleigh", name: "Raleigh", state: "NC", metro: "Research Triangle", type: "metro-hub", nearbySuburbs: ["apex", "cary", "wake-forest"], majorCounties: "Serving Wake, Durham, and Orange counties.", localMarketStat: "With over 12,000 new single-family permits pulled in the Triangle this year, subcontractor availability is tighter than ever." },
+  { slug: "apex", name: "Apex", state: "NC", metro: "Research Triangle", type: "suburb", parentMetro: "raleigh", majorCounties: "Serving Wake County.", localMarketStat: "Apex's master-planned residential growth requires rapid deployment of licensed trades." },
+  { slug: "cary", name: "Cary", state: "NC", metro: "Research Triangle", type: "suburb", parentMetro: "raleigh", majorCounties: "Serving Wake and Chatham counties.", localMarketStat: "High-end corporate campuses and luxury renovations in Cary demand highly vetted subcontractors." },
+  { slug: "wake-forest", name: "Wake Forest", state: "NC", metro: "Research Triangle", type: "suburb", parentMetro: "raleigh", majorCounties: "Serving Wake and Franklin counties.", localMarketStat: "Rapid northern suburban sprawl means framing and concrete crews are booking 4-6 weeks out." },
+
+  // --- DURHAM HUB & SPOKES ---
+  { slug: "durham", name: "Durham", state: "NC", metro: "Research Triangle", type: "metro-hub", nearbySuburbs: ["chapel-hill", "hillsborough", "carrboro"], majorCounties: "Serving Durham, Wake, and Orange counties.", localMarketStat: "Durham County issued over 3,800 residential permits last year. Drywall and electrical crews are in high demand." },
+  { slug: "chapel-hill", name: "Chapel Hill", state: "NC", metro: "Research Triangle", type: "suburb", parentMetro: "durham", majorCounties: "Serving Orange County.", localMarketStat: "Strict local zoning and university-adjacent commercial build-outs require highly compliant tradesmen." },
+  { slug: "hillsborough", name: "Hillsborough", state: "NC", metro: "Research Triangle", type: "suburb", parentMetro: "durham", majorCounties: "Serving Orange County.", localMarketStat: "Expanding residential subdivisions along the I-85 corridor have created a severe shortage of MEP trades." },
+  { slug: "carrboro", name: "Carrboro", state: "NC", metro: "Research Triangle", type: "suburb", parentMetro: "durham", majorCounties: "Serving Orange County.", localMarketStat: "High-density infill and mixed-use development are driving demand for specialized structural crews." },
+
+  // --- CHARLOTTE HUB & SPOKES ---
+  { slug: "charlotte", name: "Charlotte", state: "NC", metro: "Charlotte Metro", type: "metro-hub", nearbySuburbs: ["huntersville", "concord", "gastonia"], majorCounties: "Serving Mecklenburg, Union, and Gaston counties.", localMarketStat: "Charlotte is the fastest-growing metro in the Carolinas. GCs report 6–8 week backlogs for concrete crews." },
+  { slug: "huntersville", name: "Huntersville", state: "NC", metro: "Charlotte Metro", type: "suburb", parentMetro: "charlotte", majorCounties: "Serving North Mecklenburg County.", localMarketStat: "Lake Norman waterfront luxury builds and commercial retail are absorbing local labor rapidly." },
+  { slug: "concord", name: "Concord", state: "NC", metro: "Charlotte Metro", type: "suburb", parentMetro: "charlotte", majorCounties: "Serving Cabarrus County.", localMarketStat: "Heavy logistics, warehousing, and massive subdivisions off I-85 require high-volume production crews." },
+  { slug: "gastonia", name: "Gastonia", state: "NC", metro: "Charlotte Metro", type: "suburb", parentMetro: "charlotte", majorCounties: "Serving Gaston County.", localMarketStat: "Affordable housing tracts and manufacturing facility expansions have drained local subcontractor pools." },
+
+  // --- GREENSBORO HUB & SPOKES ---
+  { slug: "greensboro", name: "Greensboro", state: "NC", metro: "Piedmont Triad", type: "metro-hub", nearbySuburbs: ["high-point", "burlington", "kernersville"], majorCounties: "Serving Guilford, Forsyth, and Alamance counties.", localMarketStat: "The Piedmont Triad posted a 22% increase in commercial building permits last quarter." },
+  { slug: "high-point", name: "High Point", state: "NC", metro: "Piedmont Triad", type: "suburb", parentMetro: "greensboro", majorCounties: "Serving Guilford County.", localMarketStat: "Industrial and furniture-market facility expansions require robust commercial MEP trades." },
+  { slug: "burlington", name: "Burlington", state: "NC", metro: "Piedmont Triad", type: "suburb", parentMetro: "greensboro", majorCounties: "Serving Alamance County.", localMarketStat: "Located between two major hubs, Burlington's residential sprawl is pulling labor from all directions." },
+  { slug: "kernersville", name: "Kernersville", state: "NC", metro: "Piedmont Triad", type: "suburb", parentMetro: "greensboro", majorCounties: "Serving Forsyth County.", localMarketStat: "Heavy logistics and distribution center construction has created a premium on commercial concrete and steel trades." },
+
+  // --- GREENVILLE HUB & SPOKES ---
+  { slug: "greenville", name: "Greenville", state: "SC", metro: "Upstate", type: "metro-hub", nearbySuburbs: ["spartanburg", "greer", "mauldin"], majorCounties: "Serving Greenville, Spartanburg, and Anderson counties.", localMarketStat: "Greenville County alone recorded 5,200 new residential permits this year, a 19% jump." },
+  { slug: "spartanburg", name: "Spartanburg", state: "SC", metro: "Upstate", type: "suburb", parentMetro: "greenville", majorCounties: "Serving Spartanburg County.", localMarketStat: "Massive manufacturing and automotive supply chain builds require specialized commercial crews." },
+  { slug: "greer", name: "Greer", state: "SC", metro: "Upstate", type: "suburb", parentMetro: "greenville", majorCounties: "Serving Greenville and Spartanburg counties.", localMarketStat: "Inland port logistics expansion means flatwork and commercial roofing subs are heavily backlogged." },
+  { slug: "mauldin", name: "Mauldin", state: "SC", metro: "Upstate", type: "suburb", parentMetro: "greenville", majorCounties: "Serving Greenville County.", localMarketStat: "Rapid multi-family and retail strip developments are driving peak demand for drywall and plumbing." },
+
+  // --- ATLANTA HUB & SPOKES ---
+  { slug: "atlanta", name: "Atlanta", state: "GA", metro: "Metro Atlanta", type: "metro-hub", nearbySuburbs: ["alpharetta", "marietta", "roswell"], majorCounties: "Serving Fulton, Cobb, and Gwinnett counties.", localMarketStat: "Metro Atlanta is on pace for 35,000+ new housing units. Traffic requires strictly localized subcontractor dispatch." },
+  { slug: "alpharetta", name: "Alpharetta", state: "GA", metro: "Metro Atlanta", type: "suburb", parentMetro: "atlanta", majorCounties: "Serving North Fulton County.", localMarketStat: "Major tech hubs and affluent housing demand premium finishes and reliable framing crews." },
+  { slug: "marietta", name: "Marietta", state: "GA", metro: "Metro Atlanta", type: "suburb", parentMetro: "atlanta", majorCounties: "Serving Cobb County.", localMarketStat: "Industrial warehousing and hospital expansions require highly compliant commercial MEP trades." },
+  { slug: "roswell", name: "Roswell", state: "GA", metro: "Metro Atlanta", type: "suburb", parentMetro: "atlanta", majorCounties: "Serving North Fulton County.", localMarketStat: "Historic downtown renovations and luxury multi-family require specialized infill contractors." },
+
+  // --- NASHVILLE HUB & SPOKES ---
+  { slug: "nashville", name: "Nashville", state: "TN", metro: "Middle Tennessee", type: "metro-hub", nearbySuburbs: ["franklin", "murfreesboro", "hendersonville"], majorCounties: "Serving Davidson, Williamson, and Rutherford counties.", localMarketStat: "With 16,000+ residential permits pulled, framing and concrete crews are in critical shortage across the region." },
+  { slug: "franklin", name: "Franklin", state: "TN", metro: "Middle Tennessee", type: "suburb", parentMetro: "nashville", majorCounties: "Serving Williamson County.", localMarketStat: "Wealthy corporate relocations and high-end custom builds require strict architectural compliance." },
+  { slug: "murfreesboro", name: "Murfreesboro", state: "TN", metro: "Middle Tennessee", type: "suburb", parentMetro: "nashville", majorCounties: "Serving Rutherford County.", localMarketStat: "Massive population influx is driving tract housing and school construction at record speeds." },
+  { slug: "hendersonville", name: "Hendersonville", state: "TN", metro: "Middle Tennessee", type: "suburb", parentMetro: "nashville", majorCounties: "Serving Sumner County.", localMarketStat: "Lakefront properties and retail commercial growth have spiked demand for roofing and concrete subs." },
+
+  // --- DALLAS HUB & SPOKES ---
+  { slug: "dallas", name: "Dallas", state: "TX", metro: "DFW Metroplex", type: "metro-hub", nearbySuburbs: ["frisco", "plano", "mckinney"], majorCounties: "Serving Dallas, Collin, and Tarrant counties.", localMarketStat: "DFW leads the nation in housing starts. Expansive clay soils demand specialized concrete and framing knowledge." },
+  { slug: "frisco", name: "Frisco", state: "TX", metro: "DFW Metroplex", type: "suburb", parentMetro: "dallas", majorCounties: "Serving Collin and Denton counties.", localMarketStat: "PGA headquarters and luxury mixed-use developments are absorbing commercial crews entirely." },
+  { slug: "plano", name: "Plano", state: "TX", metro: "DFW Metroplex", type: "suburb", parentMetro: "dallas", majorCounties: "Serving Collin County.", localMarketStat: "Corporate headquarters build-outs keep low-voltage, electrical, and drywall crews at full capacity." },
+  { slug: "mckinney", name: "McKinney", state: "TX", metro: "DFW Metroplex", type: "suburb", parentMetro: "dallas", majorCounties: "Serving Collin County.", localMarketStat: "Rapid northern residential sprawl relies on high-volume production framing and plumbing trades." },
+
+  // --- AUSTIN HUB & SPOKES ---
+  { slug: "austin", name: "Austin", state: "TX", metro: "Central Texas", type: "metro-hub", nearbySuburbs: ["round-rock", "georgetown", "cedar-park"], majorCounties: "Serving Travis and Williamson counties.", localMarketStat: "Austin construction employment grew 8% YoY. Rocky limestone excavation complicates underground trade schedules." },
+  { slug: "round-rock", name: "Round Rock", state: "TX", metro: "Central Texas", type: "suburb", parentMetro: "austin", majorCounties: "Serving Williamson County.", localMarketStat: "Tech-manufacturing hubs and endless residential sprawl require massive concrete and structural steel scaling." },
+  { slug: "georgetown", name: "Georgetown", state: "TX", metro: "Central Texas", type: "suburb", parentMetro: "austin", majorCounties: "Serving Williamson County.", localMarketStat: "Heavy retirement community builds create consistent demand for drywall, painting, and HVAC trades." },
+  { slug: "cedar-park", name: "Cedar Park", state: "TX", metro: "Central Texas", type: "suburb", parentMetro: "austin", majorCounties: "Serving Williamson County.", localMarketStat: "Retail power centers and high-density mixed use require fast, reliable commercial subcontracting." },
+
+  // --- PHOENIX HUB & SPOKES ---
+  { slug: "phoenix", name: "Phoenix", state: "AZ", metro: "Valley of the Sun", type: "metro-hub", nearbySuburbs: ["scottsdale", "mesa", "chandler"], majorCounties: "Serving Maricopa and Pinal counties.", localMarketStat: "With 31,000+ single-family permits, extreme summer heat demands crews capable of early-morning production shifts." },
+  { slug: "scottsdale", name: "Scottsdale", state: "AZ", metro: "Valley of the Sun", type: "suburb", parentMetro: "phoenix", majorCounties: "Serving Maricopa County.", localMarketStat: "Ultra-luxury custom homes and high-end hospitality builds require elite, detail-oriented tradesmen." },
+  { slug: "mesa", name: "Mesa", state: "AZ", metro: "Valley of the Sun", type: "suburb", parentMetro: "phoenix", majorCounties: "Serving Maricopa County.", localMarketStat: "East Valley tech expansions and heavy residential tracts are driving severe concrete and stucco shortages." },
+  { slug: "chandler", name: "Chandler", state: "AZ", metro: "Valley of the Sun", type: "suburb", parentMetro: "phoenix", majorCounties: "Serving Maricopa County.", localMarketStat: "Semiconductor supply chain facilities demand strict commercial MEP (Mechanical, Electrical, Plumbing) compliance." },
 ]
 
 export function getCity(slug: string) {
@@ -367,13 +306,4 @@ export function cityLabel(city: City) {
 
 export function getLicenseReq(trade: Trade, state: string): string {
   return trade.stateLicenseRequirement[state] ?? "Active trade license and general liability coverage required. We verify this for you."
-}
-
-export type ContentOverride = {
-  heroSubheading?: string
-  uniqueParagraph?: string
-  expertise?: string[]
-  compliance?: string[]
-  marketVibe?: string
-  recentPlacements?: string[]
 }

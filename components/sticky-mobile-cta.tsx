@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import { site } from "@/lib/data"
 import WhatsAppButton from "@/components/whatsapp-button"
@@ -24,12 +25,12 @@ export function StickyMobileCta() {
         <WhatsAppButton
           phoneNumber={site.whatsappPhone}
         />
-        <a
+        <Link
           href="/#request-crew"
           className="flex h-12 flex-1 items-center justify-center rounded-md bg-accent font-bold text-accent-foreground"
         >
           Request Crew
-        </a>
+        </Link>
       </div>
     </div>
   )
