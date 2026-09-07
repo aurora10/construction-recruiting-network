@@ -71,6 +71,7 @@ export default async function CityHubPage({ params }: { params: Promise<Params> 
         aside={
           <LeadForm
             city={cityLabel(city)}
+            siteKey={process.env.TURNSTILE_SITE_KEY}
             heading={`Request a ${city.name} Crew`}
             subheading="Tell us the trade and we'll match availability."
           />

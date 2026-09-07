@@ -27,7 +27,13 @@ export default function HomePage() {
           </>
         }
         subheading="Pre-vetted, insured, and available now. Stop dealing with Craigslist flakes — connect with professional subcontractor crews in your market today."
-        aside={<LeadForm heading="Request a Crew" subheading="Response within 1 business hour." />}
+        aside={
+          <LeadForm
+            siteKey={process.env.TURNSTILE_SITE_KEY}
+            heading="Request a Crew"
+            subheading="Response within 1 business hour."
+          />
+        }
       />
 
       <section className="border-b border-border bg-primary">

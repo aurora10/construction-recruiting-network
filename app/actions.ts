@@ -1,13 +1,16 @@
 "use server"
 
 import { z } from "zod"
+import { appendSubApplicationToSheet } from "@/lib/google-sheets"
+import { site } from "@/lib/data"
 
 // ---------------------------------------------------------------------------
 // Zod Schemas (Layer 3 — strict validation)
 // ---------------------------------------------------------------------------
 
-const phoneRegex = /^[0-9\-\+\s\(\)]{10,15}$/
-const noLinksRegex = /^[^<>\[\]http]+$/i
+const phoneRegex = /^\+?[\d\s().-]{10,16}$/
+// Blocks URLs and HTML markup but allows ordinary text (e.g. "John Smith").
+const noLinksRegex = /^(?!.*(?:https?:\/\/|www\.|<|>|\[|\]))[\s\S]+$/i
 
 const leadSchema = z.object({
   name: z
@@ -32,17 +35,39 @@ const leadSchema = z.object({
 })
 
 const subSchema = z.object({
+  primaryTrade: z.string().min(1, "Primary trade is required"),
+  crewSize: z.string().min(1, "Crew size is required"),
+  hasInsurance: z.string().min(1, "Insurance status is required"),
+  travelRadius: z.string().min(1, "Travel radius is required"),
   name: z
     .string()
     .min(2, "Name is too short")
     .max(100)
     .regex(noLinksRegex, "No links allowed"),
-  crewSize: z.string().min(1, "Crew size is required"),
-  insurance: z.string().min(1, "Insurance level is required"),
-  trade: z.string().optional(),
-  city: z.string().optional(),
+  businessName: z
+    .string()
+    .max(150)
+    .regex(noLinksRegex, "No links allowed")
+    .optional()
+    .or(z.literal("")),
+  phone: z
+    .string()
+    .regex(phoneRegex, "Invalid phone format")
+    .refine((val) => {
+      const digits = val.replace(/\D/g, "")
+      return digits.length >= 10 && digits.length <= 15
+    }, "Please enter a valid 10-digit phone number"),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .optional()
+    .or(z.literal("")),
+  sourceCity: z.string().optional().or(z.literal("")),
+  sourceTrade: z.string().optional().or(z.literal("")),
+  sourceUrl: z.string().optional().or(z.literal("")),
   company_url: z.string().optional(),
   formRenderTime: z.string(),
+  turnstileToken: z.string().optional(),
 })
 
 // ---------------------------------------------------------------------------
@@ -91,21 +116,27 @@ async function verifyTurnstile(token: string): Promise<boolean> {
   }
 }
 
-async function postToWebhook(payload: Record<string, unknown>): Promise<void> {
+async function postToWebhook(payload: Record<string, unknown>): Promise<boolean> {
   const webhookUrl = process.env.WEBHOOK_URL
   if (!webhookUrl) {
     console.log("[actions] WEBHOOK_URL not set — data:", payload)
-    return
+    return false
   }
 
   try {
-    await fetch(webhookUrl, {
+    const res = await fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
+    if (!res.ok) {
+      console.error(`[actions] Webhook responded with status ${res.status}`)
+      return false
+    }
+    return true
   } catch (err) {
     console.error("[actions] Webhook delivery failed:", err)
+    return false
   }
 }
 
@@ -133,18 +164,23 @@ export async function submitLead(
     return fakeSuccess()
   }
 
-  // Layer 2 — Time-to-fill check (must be >= 4 seconds)
-  const renderTime = parseInt(formRenderTime, 10)
-  if (Number.isNaN(renderTime) || Date.now() - renderTime < 4000) {
-    return fakeSuccess()
-  }
-
-  // Layer 4 — Cloudflare Turnstile verification
+  // Layer 4 — Cloudflare Turnstile verification: a verified token is positive
+  // proof of a human, so the time-to-fill check must never silently drop them.
+  let humanVerified = false
   if (turnstileToken) {
-    const ok = await verifyTurnstile(turnstileToken)
-    if (!ok) {
+    humanVerified = await verifyTurnstile(turnstileToken)
+    if (!humanVerified) {
       return { status: "error", message: "Security verification failed. Please try again." }
     }
+  }
+
+  // Layer 2 — Time-to-fill check (only filters unverified, sub-4s submissions)
+  const renderTime = parseInt(formRenderTime, 10)
+  if (
+    !humanVerified &&
+    (Number.isNaN(renderTime) || Date.now() - renderTime < 4000)
+  ) {
+    return fakeSuccess()
   }
 
   // All checks passed — deliver to webhook
@@ -159,7 +195,8 @@ export async function submitLead(
 }
 
 // ---------------------------------------------------------------------------
-// Subcontractor Application Form (no Turnstile — subs are lower spam risk)
+// Subcontractor Application Form (Turnstile when configured — a verified token
+// proves a human is present, so the time-to-fill heuristic never drops them)
 // ---------------------------------------------------------------------------
 
 export async function submitSubApplication(
@@ -174,7 +211,7 @@ export async function submitSubApplication(
     return { status: "error", message: first?.message ?? "Invalid submission data." }
   }
 
-  const { company_url, formRenderTime, ...clean } = parsed.data
+  const { company_url, formRenderTime, turnstileToken, ...clean } = parsed.data
 
   // Layer 1 — Honeypot check
   if (company_url && company_url.length > 0) {
@@ -185,9 +222,26 @@ export async function submitSubApplication(
     }
   }
 
-  // Layer 2 — Time-to-fill check
   const renderTime = parseInt(formRenderTime, 10)
-  if (Number.isNaN(renderTime) || Date.now() - renderTime < 4000) {
+
+  // Layer 4 — Cloudflare Turnstile: a verified token is positive proof of a
+  // human, so the time-to-fill check below must never silently drop them.
+  let humanVerified = false
+  if (turnstileToken) {
+    humanVerified = await verifyTurnstile(turnstileToken)
+    if (!humanVerified) {
+      return {
+        status: "error",
+        message: "Security verification failed. Please try again.",
+      }
+    }
+  }
+
+  // Layer 2 — Time-to-fill check (only filters unverified, sub-4s submissions)
+  if (
+    !humanVerified &&
+    (Number.isNaN(renderTime) || Date.now() - renderTime < 4000)
+  ) {
     return {
       status: "success",
       message:
@@ -195,9 +249,41 @@ export async function submitSubApplication(
     }
   }
 
-  // All checks passed — deliver to webhook
+  // All checks passed — deliver to Google Sheets directly
   console.log("[actions] ✅ Real sub application:", clean)
-  await postToWebhook(clean as unknown as Record<string, unknown>)
+  let savedToSheets = false
+  try {
+    await appendSubApplicationToSheet({
+      timestamp: new Date().toISOString(),
+      sourceCity: clean.sourceCity ?? "",
+      sourceTrade: clean.sourceTrade ?? "",
+      sourceUrl: clean.sourceUrl ?? "",
+      name: clean.name,
+      businessName: clean.businessName ?? "",
+      phone: clean.phone,
+      email: clean.email ?? "",
+      primaryTrade: clean.primaryTrade,
+      crewSize: clean.crewSize,
+      hasInsurance: clean.hasInsurance,
+      travelRadius: clean.travelRadius,
+    })
+    savedToSheets = true
+  } catch (err) {
+    console.error("[actions] Failed to append sub application to Google Sheets:", err)
+  }
+
+  // Backup webhook if configured (returns true only when it actually delivered)
+  const deliveredToWebhook = await postToWebhook(
+    clean as unknown as Record<string, unknown>,
+  )
+
+  // Never show a success screen for a row that was stored nowhere.
+  if (!savedToSheets && !deliveredToWebhook) {
+    return {
+      status: "error",
+      message: `We couldn't save your application right now. Please try again in a minute or call ${site.phoneDisplay}.`,
+    }
+  }
 
   return {
     status: "success",

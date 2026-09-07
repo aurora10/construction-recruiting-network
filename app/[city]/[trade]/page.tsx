@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!city || !trade) return {}
 
   return {
-    title: `${trade.name} in ${city.name}, ${city.state} — Vetted & Insured Crews`,
+    title: `${trade.name} in ${city.name}, ${city.state} — Vetted & Insured Crews | Construction Staffing & Recruiting`,
     description: `Hire pre-vetted ${trade.name.toLowerCase()} in ${cityLabel(city)}. Licensed, insured, and ready to bid. Request available crews in under 60 seconds.`,
     alternates: { canonical: `/${city.slug}/${trade.slug}` },
   }
@@ -102,6 +102,7 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
             trade={trade.name}
             city={cityLabel(city)}
             projectTypes={trade.projectTypes}
+            siteKey={process.env.TURNSTILE_SITE_KEY}
             heading={`Get ${trade.singular} Availability`}
             subheading={`Serving ${city.name} and the greater ${city.metro}.`}
           />

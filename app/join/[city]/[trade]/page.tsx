@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { CircleCheckBig } from "lucide-react"
 import { Hero } from "@/components/hero"
-import { LeadForm } from "@/components/lead-form"
+import { SubApplyForm } from "@/components/sub-apply-form"
 import { cities, cityLabel, getCity, getLicenseReq, getTrade, trades } from "@/lib/data"
 
 type Params = { city: string; trade: string }
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!city || !trade) return {}
 
   return {
-    title: `${trade.name} Jobs in ${city.name}, ${city.state} — Join the Subcontractor Network`,
+    title: `${trade.name} Jobs in ${city.name}, ${city.state} — Join the Subcontractor Network | Construction Staffing & Recruiting`,
     description: `Independent ${trade.name.toLowerCase()} wanted in ${cityLabel(city)}. Get matched with vetted general contractors — no lead fees, no bidding wars. Join the network free.`,
     alternates: { canonical: `/join/${city.slug}/${trade.slug}` },
   }
@@ -50,10 +50,10 @@ export default async function JoinTradePage({ params }: { params: Promise<Params
         }
         subheading={`Join the ${city.name} network and we'll send your ${trade.singular.toLowerCase()} qualified requests from general contractors in ${city.metro}. Free to join — we verify your license and insurance once, then start routing work.`}
         aside={
-          <LeadForm
+          <SubApplyForm
             trade={trade.name}
             city={cityLabel(city)}
-            projectTypes={trade.projectTypes}
+            siteKey={process.env.TURNSTILE_SITE_KEY}
             heading={`Apply as a ${trade.singular}`}
             subheading={`Serving ${city.name} and the greater ${city.metro}.`}
           />

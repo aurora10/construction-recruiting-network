@@ -49,7 +49,7 @@ export const trades: Trade[] = [
     name: "Framing Subcontractors",
     singular: "Framing Crew",
     blurb: "Rough carpentry crews for stick-built and panelized residential, multifamily, and light commercial framing.",
-    projectTypes: ["Single-family residential", "Multifamily / Apartments", "Light commercial", "Remodel / Addition"],
+    projectTypes: ["Single-family residential", "Multifamily / Apartments", "Light commercial", "Remodel / Addition", "Wood framing"],
     subBenefits: [
       "Crews sized to your production schedule — 3-man, 4-man, or full-squad matches",
       "Stick-built and panelized jobs matched to your specialty",
@@ -95,7 +95,7 @@ export const trades: Trade[] = [
     name: "Electrical Contractors",
     singular: "Electrical Crew",
     blurb: "Licensed electricians and journeyman-led crews for rough-in, trim-out, service upgrades, and inspections.",
-    projectTypes: ["Residential rough-in", "Commercial build-out", "Service upgrade", "Troubleshooting / Repair"],
+    projectTypes: ["Residential rough-in", "Commercial build-out", "Commercial service upgrade", "Commercial troubleshooting / Repair"],
     subBenefits: [
       "Master electrician and journeyman-led crews only — no unlicensed labor",
       "Rough-in, trim-out, and service upgrade requests pre-qualified to your license class",
@@ -118,7 +118,7 @@ export const trades: Trade[] = [
     name: "Plumbing Contractors",
     singular: "Plumbing Crew",
     blurb: "Licensed plumbers for underslab, rough-in, top-out, and fixture set on tight production schedules.",
-    projectTypes: ["Residential rough-in", "Commercial build-out", "Repipe", "Service / Repair"],
+    projectTypes: ["Residential rough-in", "Commercial build-out", "Commercial repipe", "Commercial service / Repair"],
     subBenefits: [
       "Licensed crews matched to underslab, rough-in, top-out, and fixture set phases",
       "Repipe and service calls routed directly to your crew lead",
@@ -210,7 +210,7 @@ export const trades: Trade[] = [
     name: "HVAC Contractors",
     singular: "HVAC Crew",
     blurb: "Mechanical crews for duct rough-in, equipment set, start-up, and load-calc documentation.",
-    projectTypes: ["Residential install", "Commercial install", "Change-out", "Service / Repair"],
+    projectTypes: ["Residential install", "Commercial install", "Commercial change-out", "Commercial service / Repair"],
     subBenefits: [
       "Duct rough-in, equipment set, and start-up jobs matched to your crew size",
       "Load-calc documentation provided — GCs who do their homework",

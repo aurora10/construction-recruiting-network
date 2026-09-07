@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!city || !trade) return {}
 
   return {
-    title: `${trade.name} Opportunities in ${city.name}, ${city.state} — Join the Network Free`,
+    title: `${trade.name} Opportunities in ${city.name}, ${city.state} — Join the Network Free | Construction Staffing & Recruiting`,
     description: `${trade.singular.toLowerCase()}s wanted in ${cityLabel(city)}. Stop hunting for bids — let ${city.name}'s top GCs come to you. Join our free subcontractor network today.`,
     alternates: { canonical: `/jobs/${city.slug}/${trade.slug}` },
   }
@@ -53,6 +53,7 @@ export default async function JobsTradePage({ params }: { params: Promise<Params
           <SubApplyForm
             trade={trade.name}
             city={cityLabel(city)}
+            siteKey={process.env.TURNSTILE_SITE_KEY}
             heading={`Apply as a ${trade.singular}`}
             subheading={`Serving ${city.name} and the greater ${city.metro}.`}
           />

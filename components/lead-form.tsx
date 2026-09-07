@@ -15,12 +15,14 @@ export function LeadForm({
   trade,
   city,
   projectTypes,
+  siteKey,
   heading = "Request a Crew",
   subheading = "Response within 1 business hour.",
 }: {
   trade?: string
   city?: string
   projectTypes?: string[]
+  siteKey?: string
   heading?: string
   subheading?: string
 }) {
@@ -35,8 +37,6 @@ export function LeadForm({
     "Remodel / Addition",
     "Repair / Service",
   ]
-
-  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
   if (state.status === "success") {
     return (
@@ -148,12 +148,12 @@ export function LeadForm({
           />
         </div>
 
-        {/* Layer 4 — Cloudflare Turnstile (invisible, only if configured) */}
-        {turnstileSiteKey ? (
+        {/* Layer 4 — Cloudflare Turnstile (invisible, only if a site key is passed) */}
+        {siteKey ? (
           <>
             <input type="hidden" name="turnstileToken" value={turnstileToken} />
             <Turnstile
-              siteKey={turnstileSiteKey}
+              siteKey={siteKey}
               options={{ size: "invisible" }}
               onSuccess={(token) => {
                 setTurnstileToken(token)
