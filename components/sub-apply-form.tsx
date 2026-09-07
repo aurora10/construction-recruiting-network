@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState } from "react"
 import { ArrowRight, CircleCheckBig, Phone } from "lucide-react"
 import { submitSubApplication, type LeadState } from "@/app/actions"
-import { site } from "@/lib/data"
+import { servedStateNames, servedStates, site } from "@/lib/data"
 import { Turnstile } from "@marsidev/react-turnstile"
 
 const initialState: LeadState = { status: "idle", message: "" }
@@ -56,6 +56,8 @@ export function SubApplyForm({
   const [primaryTrade, setPrimaryTrade] = useState(() => matchInitialTrade(trade))
   const [crewSize, setCrewSize] = useState("")
   const [hasInsurance, setHasInsurance] = useState("")
+  const [baseState, setBaseState] = useState("")
+  const [baseCity, setBaseCity] = useState("")
   const [travelRadius, setTravelRadius] = useState("")
   const [step1Error, setStep1Error] = useState("")
 
@@ -82,6 +84,10 @@ export function SubApplyForm({
     }
     if (!hasInsurance) {
       setStep1Error("Please indicate if you have liability insurance.")
+      return
+    }
+    if (!baseState) {
+      setStep1Error("Please select the state where your crew is based.")
       return
     }
     if (!travelRadius) {
@@ -252,6 +258,54 @@ export function SubApplyForm({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="sub-baseState" className="text-sm font-bold text-foreground">
+              Crew Base State
+            </label>
+            <select
+              id="sub-baseState"
+              name="baseState"
+              value={baseState}
+              onChange={(e) => {
+                setBaseState(e.target.value)
+                setStep1Error("")
+              }}
+              required={step === 1}
+              className={fieldClass}
+            >
+              <option value="" disabled>
+                Select your crew's home state
+              </option>
+              {servedStates.map((code) => (
+                <option key={code} value={code}>
+                  {servedStateNames[code]} ({code})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="sub-baseCity"
+              className="text-sm font-bold text-foreground"
+            >
+              Base City / Area{" "}
+              <span className="font-medium text-muted-foreground">(optional)</span>
+            </label>
+            <input
+              id="sub-baseCity"
+              name="baseCity"
+              maxLength={80}
+              autoComplete="address-level2"
+              className={fieldClass}
+              placeholder="e.g., Raleigh"
+              onChange={(e) => {
+                setBaseCity(e.target.value)
+                setStep1Error("")
+              }}
+            />
           </div>
 
           <div className="flex flex-col gap-1.5">

@@ -13,6 +13,8 @@ export type SubApplicationRow = {
   crewSize: string
   hasInsurance: string
   travelRadius: string
+  baseState: string
+  baseCity: string
 }
 
 export async function appendSubApplicationToSheet(data: SubApplicationRow): Promise<void> {
@@ -54,11 +56,13 @@ export async function appendSubApplicationToSheet(data: SubApplicationRow): Prom
     data.travelRadius,
     "", // Column M: Vetting Status (Leave blank/null)
     "", // Column N: GC Placement (Leave blank/null)
+    data.baseState || "", // Column O: Base State (crew's home state)
+    data.baseCity || "", // Column P: Base City (crew's home city, optional)
   ]
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: "Sheet1!A:N",
+    range: "Sheet1!A:P",
     valueInputOption: "USER_ENTERED",
     insertDataOption: "INSERT_ROWS",
     requestBody: {

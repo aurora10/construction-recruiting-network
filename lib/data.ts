@@ -307,3 +307,16 @@ export function cityLabel(city: City) {
 export function getLicenseReq(trade: Trade, state: string): string {
   return trade.stateLicenseRequirement[state] ?? "Active trade license and general liability coverage required. We verify this for you."
 }
+// States the network currently serves, used by the subcontractor application
+// form (Step 1: "Crew Base State") and by server-side validation.
+export const servedStates = ["NC", "SC", "GA", "TN", "TX", "AZ"] as const
+export type ServedState = (typeof servedStates)[number]
+
+export const servedStateNames: Record<ServedState, string> = {
+  NC: "North Carolina",
+  SC: "South Carolina",
+  GA: "Georgia",
+  TN: "Tennessee",
+  TX: "Texas",
+  AZ: "Arizona",
+}

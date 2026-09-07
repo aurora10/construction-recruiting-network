@@ -2,7 +2,7 @@
 
 import { z } from "zod"
 import { appendSubApplicationToSheet } from "@/lib/google-sheets"
-import { site } from "@/lib/data"
+import { servedStates, site } from "@/lib/data"
 
 // ---------------------------------------------------------------------------
 // Zod Schemas (Layer 3 — strict validation)
@@ -39,6 +39,15 @@ const subSchema = z.object({
   crewSize: z.string().min(1, "Crew size is required"),
   hasInsurance: z.string().min(1, "Insurance status is required"),
   travelRadius: z.string().min(1, "Travel radius is required"),
+  baseState: z.enum(servedStates, {
+    message: "Please select the state where your crew is based.",
+  }),
+  baseCity: z
+    .string()
+    .max(80)
+    .regex(noLinksRegex, "No links allowed")
+    .optional()
+    .or(z.literal("")),
   name: z
     .string()
     .min(2, "Name is too short")
@@ -266,6 +275,8 @@ export async function submitSubApplication(
       crewSize: clean.crewSize,
       hasInsurance: clean.hasInsurance,
       travelRadius: clean.travelRadius,
+      baseState: clean.baseState,
+      baseCity: clean.baseCity ?? "",
     })
     savedToSheets = true
   } catch (err) {
