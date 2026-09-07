@@ -2,6 +2,7 @@
 
 import { z } from "zod"
 import { appendSubApplicationToSheet } from "@/lib/google-sheets"
+import { sendSubApplicationNotification } from "@/lib/email"
 import { servedStates, site } from "@/lib/data"
 
 // ---------------------------------------------------------------------------
@@ -260,27 +261,33 @@ export async function submitSubApplication(
 
   // All checks passed — deliver to Google Sheets directly
   console.log("[actions] ✅ Real sub application:", clean)
+  const row = {
+    timestamp: new Date().toISOString(),
+    sourceCity: clean.sourceCity ?? "",
+    sourceTrade: clean.sourceTrade ?? "",
+    sourceUrl: clean.sourceUrl ?? "",
+    name: clean.name,
+    businessName: clean.businessName ?? "",
+    phone: clean.phone,
+    email: clean.email ?? "",
+    primaryTrade: clean.primaryTrade,
+    crewSize: clean.crewSize,
+    hasInsurance: clean.hasInsurance,
+    travelRadius: clean.travelRadius,
+    baseState: clean.baseState,
+    baseCity: clean.baseCity ?? "",
+  }
   let savedToSheets = false
   try {
-    await appendSubApplicationToSheet({
-      timestamp: new Date().toISOString(),
-      sourceCity: clean.sourceCity ?? "",
-      sourceTrade: clean.sourceTrade ?? "",
-      sourceUrl: clean.sourceUrl ?? "",
-      name: clean.name,
-      businessName: clean.businessName ?? "",
-      phone: clean.phone,
-      email: clean.email ?? "",
-      primaryTrade: clean.primaryTrade,
-      crewSize: clean.crewSize,
-      hasInsurance: clean.hasInsurance,
-      travelRadius: clean.travelRadius,
-      baseState: clean.baseState,
-      baseCity: clean.baseCity ?? "",
-    })
+    await appendSubApplicationToSheet(row)
     savedToSheets = true
   } catch (err) {
     console.error("[actions] Failed to append sub application to Google Sheets:", err)
+  }
+
+  // Email notification on record creation (never fails the submission)
+  if (savedToSheets) {
+    await sendSubApplicationNotification(row)
   }
 
   // Backup webhook if configured (returns true only when it actually delivered)
