@@ -1,11 +1,12 @@
 import Link from 'next/link';
+import { site } from '@/lib/data';
 
 interface WhatsAppButtonProps {
   phoneNumber?: string;
   compact?: boolean;
 }
 
-export default function WhatsAppButton({ phoneNumber = "32465811031", compact = false }: WhatsAppButtonProps) {
+export default function WhatsAppButton({ phoneNumber = site.whatsappPhone, compact = false }: WhatsAppButtonProps) {
   return (
     <Link 
         href={`https://wa.me/${phoneNumber}`}

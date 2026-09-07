@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ChevronRight, CircleCheckBig, Phone } from "lucide-react"
+import { ChevronRight, CircleCheckBig, MessageCircle } from "lucide-react"
 import { Faq } from "@/components/faq"
 import { Hero } from "@/components/hero"
 import { InternalLinks } from "@/components/internal-links"
@@ -159,11 +159,13 @@ export default async function TradeLandingPage({ params }: { params: Promise<Par
               ))}
             </ul>
             <a
-              href={site.phoneHref}
+              href={site.whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-7 flex h-14 items-center justify-center gap-2 rounded-md bg-primary text-lg font-bold text-primary-foreground"
             >
-              <Phone className="h-5 w-5 text-accent" aria-hidden="true" />
-              Call dispatch: {site.phoneDisplay}
+              <MessageCircle className="h-5 w-5 text-accent" aria-hidden="true" />
+              Chat with dispatch on WhatsApp
             </a>
             <p className="mt-3 text-center text-sm text-muted-foreground">{site.hours}</p>
           </div>

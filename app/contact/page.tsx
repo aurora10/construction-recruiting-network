@@ -1,12 +1,12 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Clock, Mail, Phone, MessageCircle } from "lucide-react"
+import { Clock, Mail, MessageCircle } from "lucide-react"
 import { site } from "@/lib/data"
 
 export const metadata: Metadata = {
   title: "Contact CrewNetUSA",
   description:
-    "Get in touch with the CrewNetUSA team. Reach us by phone or email for crew requests, network inquiries, or general questions. We are an online recruiting service — no walk-in office.",
+    "Get in touch with the CrewNetUSA team. Reach us by WhatsApp or email for crew requests, network inquiries, or general questions. We are an online recruiting service — no walk-in office.",
   alternates: { canonical: "/contact" },
 }
 
@@ -17,24 +17,26 @@ export default function ContactPage() {
         Talk to a real person — not a bot.
       </h1>
       <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-        CrewNetUSA is an online recruiting service. We don't have a walk-in office, but we answer every call and email
-        directly. Whether you need a crew tomorrow or just want to understand how the network works, reach out.
+        CrewNetUSA is an online recruiting service. We don't have a walk-in office, but we answer every WhatsApp
+        message and email directly. Whether you need a crew tomorrow or just want to understand how the network works, reach out.
       </p>
 
       {/* Contact Cards */}
       <div className="mt-12 grid gap-6 sm:grid-cols-3">
-        {/* Phone */}
+        {/* WhatsApp */}
         <div className="rounded-lg border border-border bg-background p-6">
-          <Phone className="h-8 w-8 text-accent" aria-hidden="true" />
-          <h2 className="mt-4 text-base font-bold text-foreground">Phone</h2>
+          <MessageCircle className="h-8 w-8 text-accent" aria-hidden="true" />
+          <h2 className="mt-4 text-base font-bold text-foreground">WhatsApp</h2>
           <a
-            href={site.phoneHref}
-            className="mt-2 block text-lg font-bold text-accent hover:underline"
+            href={site.whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-flex items-center gap-2 rounded-md bg-[#e9f7ee] px-3 py-2 font-bold text-[#1e1e1e] hover:bg-[#d9f0e0]"
           >
-            {site.phoneDisplay}
+            Start a chat
           </a>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Call us during business hours. We pick up — no phone tree, no voicemail maze.
+          <p className="mt-3 text-sm text-muted-foreground">
+            Fastest response — usually within minutes, during and after business hours.
           </p>
         </div>
 
@@ -59,8 +61,8 @@ export default function ContactPage() {
           <h2 className="mt-4 text-base font-bold text-foreground">Business Hours</h2>
           <p className="mt-2 text-lg font-bold text-foreground">{site.hours}</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            We operate East Coast hours but serve contractors nationwide. If you call after hours we'll get back to you
-            first thing the next business day.
+            We operate East Coast hours but serve contractors nationwide. If you message after hours we'll get back to
+            you first thing the next business day.
           </p>
         </div>
       </div>
@@ -72,9 +74,9 @@ export default function ContactPage() {
           <div>
             <h2 className="text-base font-bold text-foreground">We're an online service</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              CrewNetUSA operates entirely online — we don't maintain a public office or walk-in location. This keeps our
-              overhead low and our finder's fee affordable. All communication happens by phone and email, and every crew
-              placement is confirmed in writing.
+              CrewNetUSA operates entirely online — we don't maintain a public office or walk-in location. This keeps
+              our overhead low and our finder's fee affordable. All communication happens by WhatsApp and email, and
+              every crew placement is confirmed in writing.
             </p>
           </div>
         </div>

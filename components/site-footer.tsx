@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, Clock, Mail, Phone } from "lucide-react"
+import { ArrowRight, Clock, Mail, MessageCircle } from "lucide-react"
 import { cities, site } from "@/lib/data"
 
 function LinkedinIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -59,9 +59,14 @@ export function SiteFooter() {
             <h2 className="text-sm font-black uppercase tracking-wide text-accent">Contact</h2>
             <ul className="mt-3 flex flex-col gap-3 text-sm">
               <li>
-                <a href={site.phoneHref} className="flex items-center gap-2 font-bold hover:text-accent">
-                  <Phone className="h-4 w-4" aria-hidden="true" />
-                  {site.phoneDisplay}
+                <a
+                  href={site.whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 font-bold hover:text-accent"
+                >
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  WhatsApp
                 </a>
               </li>
               <li>

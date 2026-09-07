@@ -3,7 +3,7 @@
 import { z } from "zod"
 import { appendGcLeadToSheet, appendSubApplicationToSheet } from "@/lib/google-sheets"
 import { sendGcLeadNotification, sendSubApplicationNotification } from "@/lib/email"
-import { crewTypes, servedStates, site } from "@/lib/data"
+import { crewTypes, servedStates } from "@/lib/data"
 
 // ---------------------------------------------------------------------------
 // Zod Schemas (Layer 3 — strict validation)
@@ -283,7 +283,7 @@ export async function submitLead(
   if (!savedToSheets && !deliveredToWebhook) {
     return {
       status: "error",
-      message: `We couldn't save your request right now. Please try again in a minute or call ${site.phoneDisplay}.`,
+      message: `We couldn't save your request right now. Please try again in a minute or message us on WhatsApp.`,
     }
   }
 
@@ -389,7 +389,7 @@ export async function submitSubApplication(
   if (!savedToSheets && !deliveredToWebhook) {
     return {
       status: "error",
-      message: `We couldn't save your application right now. Please try again in a minute or call ${site.phoneDisplay}.`,
+      message: `We couldn't save your application right now. Please try again in a minute or message us on WhatsApp.`,
     }
   }
 

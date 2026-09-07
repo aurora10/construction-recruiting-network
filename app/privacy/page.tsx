@@ -29,7 +29,7 @@ export default function PrivacyPage() {
       />
       <LegalSection
         heading="Contact"
-        body={`Questions about this policy? Email ${site.email} or call ${site.phoneDisplay} during office hours (${site.hours}).`}
+        body={`Questions about this policy? Email ${site.email} or message us on WhatsApp during office hours (${site.hours}).`}
       />
     </LegalPage>
   )

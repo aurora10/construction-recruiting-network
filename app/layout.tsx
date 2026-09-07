@@ -49,7 +49,11 @@ const organizationSchema = {
   url: 'https://crewnetusa.com',
   description:
     'Connect with pre-vetted, licensed, and insured subcontractor crews. Framing, drywall, electrical, plumbing, concrete, roofing and more.',
-  telephone: site.phoneDisplay,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    url: site.whatsappHref,
+  },
   email: site.email,
 }
 

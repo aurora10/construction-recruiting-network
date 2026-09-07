@@ -1,10 +1,9 @@
 export const site = {
   name: "CrewNetUSA",
   tagline: "Subcontractor Network for General Contractors",
-  phoneDisplay: "(919) 555-0142",
-  phoneHref: "tel:+19195550142",
-  whatsappPhone: "19195550142",
-  whatsappHref: "https://wa.me/19195550142",
+  // WhatsApp contact (never rendered on page — buttons only say "WhatsApp").
+  whatsappPhone: "32465811031",
+  whatsappHref: "https://wa.me/32465811031",
   email: "dispatch@crewnetusa.com",
   hours: "Mon–Sat, 6:00 AM – 7:00 PM ET",
 }

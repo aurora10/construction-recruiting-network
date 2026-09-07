@@ -29,7 +29,7 @@ export default function TermsPage() {
       />
       <LegalSection
         heading="Contact"
-        body={`Questions about these terms? Email ${site.email} or call ${site.phoneDisplay}.`}
+        body={`Questions about these terms? Email ${site.email} or message us on WhatsApp.`}
       />
     </LegalPage>
   )

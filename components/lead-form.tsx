@@ -1,7 +1,7 @@
 "use client"
 
 import { useActionState, useEffect, useState } from "react"
-import { ArrowRight, CircleCheckBig, Phone } from "lucide-react"
+import { ArrowRight, CircleCheckBig, MessageCircle } from "lucide-react"
 import { submitLead, type LeadState } from "@/app/actions"
 import {
   crewTypes,
@@ -148,11 +148,13 @@ export function LeadForm({
         <h2 className="text-2xl font-bold text-foreground">Request received</h2>
         <p className="mt-3 leading-relaxed text-muted-foreground">{state.message}</p>
         <a
-          href={site.phoneHref}
+          href={site.whatsappHref}
+          target="_blank"
+          rel="noopener noreferrer"
           className="mt-6 flex h-12 items-center justify-center gap-2 rounded-md bg-primary px-4 font-bold text-primary-foreground"
         >
-          <Phone className="h-5 w-5" aria-hidden="true" />
-          Need it today? Call {site.phoneDisplay}
+          <MessageCircle className="h-5 w-5" aria-hidden="true" />
+          Need it today? Chat on WhatsApp
         </a>
       </div>
     )
