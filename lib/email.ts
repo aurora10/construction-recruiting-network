@@ -281,3 +281,78 @@ export async function sendSubApplicationNotification(
 
   return sendMail({ to, subject, text, html })
 }
+
+// ---------------------------------------------------------------------------
+// GC crew request notification
+// ---------------------------------------------------------------------------
+
+export type GcLeadNotification = {
+  timestamp: string
+  sourceCity: string
+  sourceTrade: string
+  sourceUrl: string
+  companyName: string
+  name: string
+  role: string
+  phone: string
+  email: string
+  trade: string
+  projectType: string
+  crewSize: string
+  jobsiteCity: string
+  jobsiteState: string
+  projectSize: string
+  licenseNumber: string
+  startTiming: string
+  message: string
+}
+
+export async function sendGcLeadNotification(
+  row: GcLeadNotification,
+): Promise<EmailSendResult> {
+  const to = process.env.GMAIL_USER
+  if (!to) return { ok: false, error: "mailer not configured" }
+
+  const subject = `[${site.name}] New GC Crew Request: ${row.companyName} (${row.trade}, ${row.jobsiteCity}, ${row.jobsiteState})`
+
+  const lines = [
+    rowLabel("Type", "GC CREW REQUEST"),
+    rowLabel("Company / GC", row.companyName),
+    rowLabel("Contact", `${row.name}${row.role ? ` (${row.role})` : ""}`),
+    rowLabel("Phone", row.phone),
+    rowLabel("Email", row.email || "(not provided)"),
+    rowLabel("Trade Needed", row.trade),
+    rowLabel("Project Type", row.projectType),
+    rowLabel("Crew Size Needed", row.crewSize),
+    rowLabel("Jobsite City", row.jobsiteCity || "(not provided)"),
+    rowLabel("Jobsite State", row.jobsiteState),
+    rowLabel("Project Size", row.projectSize || "(not provided)"),
+    rowLabel("License #", row.licenseNumber || "(not provided)"),
+    rowLabel("Start Timing", row.startTiming),
+    rowLabel("Scope / Message", row.message || "(none)"),
+    rowLabel("Submitted Via (Source City)", row.sourceCity || "(direct)"),
+    rowLabel("Submitted Via (Source Trade)", row.sourceTrade || "(generic)"),
+    rowLabel("Source URL", row.sourceUrl || "(not captured)"),
+    rowLabel("Submitted (UTC)", row.timestamp),
+  ]
+
+  const text = `A general contractor just requested a crew:\n\n${lines.join("\n")}\n`
+  const esc = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+  const html = `<!DOCTYPE html><html><body style="font-family:Arial,Helvetica,sans-serif;font-size:14px">
+    <h2 style="margin-bottom:4px">New GC Crew Request</h2>
+    <p style="margin-top:0;color:#555">A general contractor just requested a subcontractor crew.</p>
+    <table cellpadding="4" cellspacing="0" style="border-collapse:collapse">
+      ${lines
+        .map((l) => {
+          const [k, ...rest] = l.split(":")
+          const v = rest.join(":").trim()
+          return `<tr><td style="font-weight:bold;border-bottom:1px solid #eee;padding-right:12px">${esc(k)}</td><td style="border-bottom:1px solid #eee">${esc(v)}</td></tr>`
+        })
+        .join("\n      ")}
+    </table>
+    <p style="color:#888;font-size:12px;margin-top:16px">Sent automatically by CrewNetUSA on record creation.</p>
+  </body></html>`
+
+  return sendMail({ to, subject, text, html })
+}

@@ -1,9 +1,9 @@
 "use server"
 
 import { z } from "zod"
-import { appendSubApplicationToSheet } from "@/lib/google-sheets"
-import { sendSubApplicationNotification } from "@/lib/email"
-import { servedStates, site } from "@/lib/data"
+import { appendGcLeadToSheet, appendSubApplicationToSheet } from "@/lib/google-sheets"
+import { sendGcLeadNotification, sendSubApplicationNotification } from "@/lib/email"
+import { crewTypes, servedStates, site } from "@/lib/data"
 
 // ---------------------------------------------------------------------------
 // Zod Schemas (Layer 3 — strict validation)
@@ -13,23 +13,68 @@ const phoneRegex = /^\+?[\d\s().-]{10,16}$/
 // Blocks URLs and HTML markup but allows ordinary text (e.g. "John Smith").
 const noLinksRegex = /^(?!.*(?:https?:\/\/|www\.|<|>|\[|\]))[\s\S]+$/i
 
+const crewSizeValues = ["1-2", "3-5", "6-10", "10+"] as const
+const startTimingValues = [
+  "ASAP",
+  "Within 2 weeks",
+  "This month",
+  "Date flexible",
+] as const
+
 const leadSchema = z.object({
+  // Project (Step 1)
+  trade: z.enum(crewTypes, { message: "Please select the trade you need." }),
+  projectType: z.string().min(1, "Project type is required"),
+  jobsiteCity: z
+    .string()
+    .min(1, "Jobsite city is required")
+    .max(80)
+    .regex(noLinksRegex, "No links allowed"),
+  jobsiteState: z.enum(servedStates, {
+    message: "Please select the state where the job is located.",
+  }),
+  crewSize: z.enum(crewSizeValues, {
+    message: "Please select the crew size you need.",
+  }),
+  startTiming: z.enum(startTimingValues, {
+    message: "Please tell us when the work needs to start.",
+  }),
+  projectSize: z
+    .string()
+    .max(60)
+    .optional()
+    .or(z.literal("")),
+  // Contact (Step 2)
+  companyName: z
+    .string()
+    .min(2, "Company name is too short")
+    .max(150)
+    .regex(noLinksRegex, "No links allowed"),
   name: z
     .string()
     .min(2, "Name is too short")
     .max(100)
     .regex(noLinksRegex, "No links allowed"),
+  role: z.string().max(40).optional().or(z.literal("")),
   phone: z.string().regex(phoneRegex, "Invalid phone format"),
   email: z.string().email("Invalid email"),
-  trade: z.string().optional(),
-  city: z.string().optional(),
-  projectType: z.string().min(1, "Project type is required"),
+  licenseNumber: z
+    .string()
+    .max(40)
+    .regex(noLinksRegex, "No links allowed")
+    .optional()
+    .or(z.literal("")),
   message: z
     .string()
     .max(2000)
     .regex(noLinksRegex, "No links allowed")
     .optional()
     .or(z.literal("")),
+  // Hidden source tracking
+  sourceCity: z.string().optional().or(z.literal("")),
+  sourceTrade: z.string().optional().or(z.literal("")),
+  sourceUrl: z.string().optional().or(z.literal("")),
+  // Security
   company_url: z.string().optional(),
   formRenderTime: z.string(),
   turnstileToken: z.string().optional(),
@@ -193,9 +238,54 @@ export async function submitLead(
     return fakeSuccess()
   }
 
-  // All checks passed — deliver to webhook
+  // All checks passed — record the GC lead
   console.log("[actions] ✅ Real GC lead:", clean)
-  await postToWebhook(clean as unknown as Record<string, unknown>)
+  const row = {
+    timestamp: new Date().toISOString(),
+    sourceCity: clean.sourceCity ?? "",
+    sourceTrade: clean.sourceTrade ?? "",
+    sourceUrl: clean.sourceUrl ?? "",
+    companyName: clean.companyName,
+    name: clean.name,
+    role: clean.role ?? "",
+    phone: clean.phone,
+    email: clean.email ?? "",
+    trade: clean.trade,
+    projectType: clean.projectType,
+    crewSize: clean.crewSize,
+    jobsiteCity: clean.jobsiteCity ?? "",
+    jobsiteState: clean.jobsiteState,
+    projectSize: clean.projectSize ?? "",
+    licenseNumber: clean.licenseNumber ?? "",
+    startTiming: clean.startTiming,
+    message: clean.message ?? "",
+  }
+
+  let savedToSheets = false
+  try {
+    await appendGcLeadToSheet(row)
+    savedToSheets = true
+  } catch (err) {
+    console.error("[actions] Failed to append GC lead to Google Sheets:", err)
+  }
+
+  // Backup webhook if configured (returns true only when it actually delivered)
+  const deliveredToWebhook = await postToWebhook(
+    clean as unknown as Record<string, unknown>,
+  )
+
+  // Email notification on record creation (never fails the submission)
+  if (savedToSheets) {
+    await sendGcLeadNotification(row)
+  }
+
+  // Never show a success screen for a lead that was stored nowhere.
+  if (!savedToSheets && !deliveredToWebhook) {
+    return {
+      status: "error",
+      message: `We couldn't save your request right now. Please try again in a minute or call ${site.phoneDisplay}.`,
+    }
+  }
 
   return {
     status: "success",

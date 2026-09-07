@@ -320,3 +320,16 @@ export const servedStateNames: Record<ServedState, string> = {
   TX: "Texas",
   AZ: "Arizona",
 }
+
+// Crew (subcontractor) types a GC can request — kept in sync with the trades
+// offered to subcontractors on the application form.
+export const crewTypes = [
+  "Framing",
+  "Drywall",
+  "Electrical",
+  "Plumbing",
+  "Concrete",
+  "Roofing",
+  "Painting",
+  "HVAC",
+] as const
