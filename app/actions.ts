@@ -2,7 +2,7 @@
 
 import { z } from "zod"
 import { appendGcLeadToSheet, appendSubApplicationToSheet } from "@/lib/google-sheets"
-import { sendGcLeadNotification, sendSubApplicationNotification } from "@/lib/email"
+import { sendGcLeadConfirmation, sendGcLeadNotification, sendSubApplicationConfirmation, sendSubApplicationNotification } from "@/lib/email"
 import { crewTypes, servedStates } from "@/lib/data"
 
 // ---------------------------------------------------------------------------
@@ -114,9 +114,8 @@ const subSchema = z.object({
     }, "Please enter a valid 10-digit phone number"),
   email: z
     .string()
-    .email("Invalid email address")
-    .optional()
-    .or(z.literal("")),
+    .min(1, "Email is required")
+    .email("Invalid email address"),
   sourceCity: z.string().optional().or(z.literal("")),
   sourceTrade: z.string().optional().or(z.literal("")),
   sourceUrl: z.string().optional().or(z.literal("")),
@@ -277,6 +276,13 @@ export async function submitLead(
   // Email notification on record creation (never fails the submission)
   if (savedToSheets) {
     await sendGcLeadNotification(row)
+    // Auto-reply to the GC so they know the request was logged.
+    await sendGcLeadConfirmation({
+      name: row.name,
+      email: row.email,
+      trade: row.trade,
+      jobsiteCity: row.jobsiteCity,
+    })
   }
 
   // Never show a success screen for a lead that was stored nowhere.
@@ -378,6 +384,8 @@ export async function submitSubApplication(
   // Email notification on record creation (never fails the submission)
   if (savedToSheets) {
     await sendSubApplicationNotification(row)
+    // Auto-reply to the applicant so they know their crew is in the network.
+    await sendSubApplicationConfirmation({ name: row.name, email: row.email })
   }
 
   // Backup webhook if configured (returns true only when it actually delivered)

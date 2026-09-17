@@ -116,6 +116,16 @@ function dotStuff(body: string): string {
     .join("\n")
 }
 
+/** Base64-encodes a MIME part body, wrapped at the 76-char line limit. */
+function wrapBase64(input: string): string {
+  const encoded = Buffer.from(input, "utf8").toString("base64")
+  const lines: string[] = []
+  for (let i = 0; i < encoded.length; i += 76) {
+    lines.push(encoded.slice(i, i + 76))
+  }
+  return lines.join("\r\n")
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -169,7 +179,7 @@ export async function sendMail(opts: {
 
     const boundary = `----=_crewnet_${Date.now().toString(36)}`
     const headers = [
-      `From: CrewNetUSA <${user}>`,
+      `From: ${site.name} <${user}>`,
       `To: <${opts.to}>`,
       `Subject: ${encodeSubject(opts.subject)}`,
       "MIME-Version: 1.0",
@@ -177,25 +187,27 @@ export async function sendMail(opts: {
       "",
     ].join("\r\n")
 
-    const textPart = [
-      `--${boundary}`,
-      'Content-Type: text/plain; charset="UTF-8"',
-      "Content-Transfer-Encoding: 7bit",
-      "",
-      opts.text,
-      "",
-    ].join("\r\n")
+    const encodePart = (
+      contentType: string,
+      body: string,
+      last = false,
+    ): string =>
+      [
+        `--${boundary}`,
+        contentType,
+        "Content-Transfer-Encoding: base64",
+        "",
+        wrapBase64(body),
+        "",
+        ...(last ? [`--${boundary}--`, ""] : []),
+      ].join("\r\n")
 
-    const htmlPart = [
-      `--${boundary}`,
+    const textPart = encodePart('Content-Type: text/plain; charset="UTF-8"', opts.text)
+    const htmlPart = encodePart(
       'Content-Type: text/html; charset="UTF-8"',
-      "Content-Transfer-Encoding: 7bit",
-      "",
       opts.html ?? "",
-      "",
-      `--${boundary}--`,
-      "",
-    ].join("\r\n")
+      true,
+    )
 
     const message = dotStuff(`${headers}${textPart}${htmlPart}`)
     expect(await session.writeData(message + "\r\n.\r\n"), 250, "message delivery")
@@ -352,6 +364,160 @@ export async function sendGcLeadNotification(
         .join("\n      ")}
     </table>
     <p style="color:#888;font-size:12px;margin-top:16px">Sent automatically by CrewNetUSA on record creation.</p>
+  </body></html>`
+
+  return sendMail({ to, subject, text, html })
+}
+
+// ---------------------------------------------------------------------------
+// Candidate Contractor confirmation (auto-reply to the applicant)
+// ---------------------------------------------------------------------------
+
+export type SubApplicationConfirmation = {
+  name: string
+  email: string
+}
+
+/** "DAVID" -> "David", "carlos" -> "Carlos", "McDonald" -> "McDonald". */
+function smartCase(value: string): string {
+  const isAllCaps = value === value.toUpperCase() && /[A-Z]/.test(value)
+  if (!isAllCaps) return value.charAt(0).toUpperCase() + value.slice(1)
+  return value
+    .split(" ")
+    .map((word) =>
+      word.length > 0
+        ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        : word,
+    )
+    .join(" ")
+}
+
+/**
+ * First name for greetings ("Carlos Mendez" -> "Carlos"). Skips a leading
+ * initial when a spelled-out given name follows ("J. Carlos Mendez" ->
+ * "Carlos") and falls back to the full name when only an initial exists
+ * ("J. Smith" -> "J. Smith" rather than "Hey J.").
+ */
+function greetingNameFrom(fullNameRaw: string): string {
+  const fullName = fullNameRaw.trim().replace(/\s+/g, " ")
+  const tokens = fullName.split(" ").filter(Boolean)
+  const strip = (t: string) => t.replace(/[.,;:]+$/, "")
+  let firstToken = strip(tokens[0] ?? "")
+  if (firstToken.length === 1 && tokens.length > 2) {
+    firstToken = strip(tokens[1] ?? "") || firstToken
+  }
+  const raw = firstToken.length > 1 ? firstToken : fullName
+  return smartCase(raw)
+}
+
+/** Greeting name without trailing punctuation, for use inside a sentence. */
+function subjectNameFrom(fullNameRaw: string): string {
+  return greetingNameFrom(fullNameRaw).replace(/[.,;:]+$/, "")
+}
+
+export async function sendSubApplicationConfirmation(
+  row: SubApplicationConfirmation,
+): Promise<EmailSendResult> {
+  const to = row.email.trim()
+  if (!to) {
+    console.warn(
+      "[email] Applicant did not provide an email — skipping confirmation.",
+    )
+    return { ok: false, error: "applicant email missing" }
+  }
+
+  const greetingName = greetingNameFrom(row.name)
+  const subjectName = subjectNameFrom(row.name)
+
+  const subject = `We got your info, ${subjectName}. You're in the grid.`
+
+  const text = `Hey ${greetingName},
+
+Confirming we received your application. Your crew is now active in the ${site.name} database.
+
+We only deal with real GCs who have real budgets. The minute a contractor in your market needs your trade, we’ll reach out directly with the job scope and timeline.
+
+Talk soon,
+
+${site.name} Dispatch
+${site.url}
+`
+
+  const esc = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+
+  const html = `<!DOCTYPE html><html><body style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1e1e1e">
+    <p>Hey ${esc(greetingName)},</p>
+    <p>Confirming we received your application. Your crew is now active in the ${esc(site.name)} database.</p>
+    <p>We only deal with real GCs who have real budgets. The minute a contractor in your market needs your trade, we’ll reach out directly with the job scope and timeline.</p>
+    <p>Talk soon,</p>
+    <p style="margin-bottom:6px"><strong>${esc(site.name)} Dispatch</strong></p>
+    <p style="margin-top:0">
+      <a href="${site.url}" style="display:inline-block;background:#111827;color:#ffffff;font-weight:bold;padding:12px 20px;border-radius:6px;text-decoration:none">Visit our website</a>
+    </p>
+    <p style="color:#888;font-size:12px;margin-top:16px">${site.url}</p>
+  </body></html>`
+
+  return sendMail({ to, subject, text, html })
+}
+
+// ---------------------------------------------------------------------------
+// GC crew request confirmation (auto-reply to the general contractor)
+// ---------------------------------------------------------------------------
+
+export type GcLeadConfirmation = {
+  name: string
+  email: string
+  trade: string
+  jobsiteCity: string
+}
+
+export async function sendGcLeadConfirmation(
+  row: GcLeadConfirmation,
+): Promise<EmailSendResult> {
+  const to = row.email.trim()
+  if (!to) {
+    console.warn(
+      "[email] GC did not provide an email — skipping confirmation.",
+    )
+    return { ok: false, error: "GC email missing" }
+  }
+
+  const greetingName = greetingNameFrom(row.name)
+  const city = row.jobsiteCity.trim() || "your area"
+  const subject = `Crew Request Logged: ${row.trade} in ${city}`
+
+  const signOff = `${site.name}`
+
+  const text = `Hey ${greetingName},
+
+Got your request. My team is currently reviewing our ${city} roster to check availability for your ${row.trade} scope.
+
+The best crews stay busy, so I am running down the schedules of our vetted guys right now to see who has the bandwidth for your start date.
+
+We will follow up with you as soon as we have a qualified crew confirmed and available for your project. If you have any blueprints or specific insurance requirements in the meantime, feel free to reply directly to this email.
+
+Thanks,
+
+Dispatch Team
+${signOff}
+${site.url}
+`
+
+  const esc = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+
+  const html = `<!DOCTYPE html><html><body style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#1e1e1e">
+    <p>Hey ${esc(greetingName)},</p>
+    <p>Got your request. My team is currently reviewing our ${esc(city)} roster to check availability for your ${esc(row.trade)} scope.</p>
+    <p>The best crews stay busy, so I am running down the schedules of our vetted guys right now to see who has the bandwidth for your start date.</p>
+    <p>We will follow up with you as soon as we have a qualified crew confirmed and available for your project. If you have any blueprints or specific insurance requirements in the meantime, feel free to reply directly to this email.</p>
+    <p>Thanks,</p>
+    <p style="margin-bottom:6px"><strong>Dispatch Team</strong><br />${esc(signOff)}</p>
+    <p style="margin-top:0">
+      <a href="${site.url}" style="display:inline-block;background:#111827;color:#ffffff;font-weight:bold;padding:12px 20px;border-radius:6px;text-decoration:none">Visit our website</a>
+    </p>
+    <p style="color:#888;font-size:12px;margin-top:16px">${site.url}</p>
   </body></html>`
 
   return sendMail({ to, subject, text, html })

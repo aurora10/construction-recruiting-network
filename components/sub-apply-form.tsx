@@ -399,12 +399,13 @@ export function SubApplyForm({
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="sub-email" className="text-sm font-bold text-foreground">
-              Email Address <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+              Email Address
             </label>
             <input
               id="sub-email"
               name="email"
               type="email"
+              required={step === 2}
               autoComplete="email"
               className={fieldClass}
               placeholder="name@company.com"

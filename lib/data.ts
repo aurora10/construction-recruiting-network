@@ -1,6 +1,7 @@
 export const site = {
   name: "CrewNetUSA",
   tagline: "Subcontractor Network for General Contractors",
+  url: "https://crewnetusa.com",
   // WhatsApp contact (never rendered on page — buttons only say "WhatsApp").
   whatsappPhone: "32465811031",
   whatsappHref: "https://wa.me/32465811031",
