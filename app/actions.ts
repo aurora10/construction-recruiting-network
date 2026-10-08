@@ -33,6 +33,16 @@ const leadSchema = z.object({
   jobsiteState: z.enum(servedStates, {
     message: "Please select the state where the job is located.",
   }),
+  jobsiteZip: z.string().regex(/^\d{5}$/, "Enter a 5-digit ZIP code"),
+  unionLaborRequired: z.enum(["Yes", "No"]).optional().or(z.literal("")),
+  workersCompRequired: z.enum(["Yes", "No"], {
+    message: "Please answer whether workers' comp is required.",
+  }),
+  minLiabilityRequired: z
+    .enum(["$1M", "$2M", "$5M+"])
+    .optional()
+    .or(z.literal("")),
+  equipmentProvidedByGc: z.enum(["Yes", "No"]).optional().or(z.literal("")),
   crewSize: z.enum(crewSizeValues, {
     message: "Please select the crew size you need.",
   }),
@@ -94,6 +104,25 @@ const subSchema = z.object({
     .regex(noLinksRegex, "No links allowed")
     .optional()
     .or(z.literal("")),
+  baseZip: z.string().regex(/^\d{5}$/, "Enter a 5-digit ZIP code"),
+  unionStatus: z
+    .enum(["Union", "Non-Union (Merit Shop)"])
+    .optional()
+    .or(z.literal("")),
+  workersComp: z.enum(["Yes", "No", "Exempt"], {
+    message: "Please select workers' comp status.",
+  }),
+  liabilityLimit: z
+    .enum(["Under $1M", "$1M", "$2M", "$5M+"])
+    .optional()
+    .or(z.literal("")),
+  equipmentOwned: z
+    .string()
+    .max(200)
+    .regex(noLinksRegex, "No links allowed")
+    .optional()
+    .or(z.literal("")),
+  bilingualForeman: z.enum(["Yes", "No"]).optional().or(z.literal("")),
   name: z
     .string()
     .min(2, "Name is too short")
@@ -258,6 +287,11 @@ export async function submitLead(
     licenseNumber: clean.licenseNumber ?? "",
     startTiming: clean.startTiming,
     message: clean.message ?? "",
+    jobsiteZip: clean.jobsiteZip,
+    unionLaborRequired: clean.unionLaborRequired ?? "",
+    workersCompRequired: clean.workersCompRequired,
+    minLiabilityRequired: clean.minLiabilityRequired ?? "",
+    equipmentProvidedByGc: clean.equipmentProvidedByGc ?? "",
   }
 
   let savedToSheets = false
@@ -372,6 +406,12 @@ export async function submitSubApplication(
     travelRadius: clean.travelRadius,
     baseState: clean.baseState,
     baseCity: clean.baseCity ?? "",
+    baseZip: clean.baseZip,
+    unionStatus: clean.unionStatus ?? "",
+    workersComp: clean.workersComp,
+    liabilityLimit: clean.liabilityLimit ?? "",
+    equipmentOwned: clean.equipmentOwned ?? "",
+    bilingualForeman: clean.bilingualForeman ?? "",
   }
   let savedToSheets = false
   try {

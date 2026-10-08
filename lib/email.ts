@@ -243,6 +243,12 @@ export type SubApplicationNotification = {
   travelRadius: string
   baseState: string
   baseCity: string
+  baseZip: string
+  unionStatus: string
+  workersComp: string
+  liabilityLimit: string
+  equipmentOwned: string
+  bilingualForeman: string
 }
 
 const rowLabel = (label: string, value: string) => `${label}: ${value}`
@@ -266,6 +272,12 @@ export async function sendSubApplicationNotification(
     rowLabel("Has Liability Insurance", row.hasInsurance),
     rowLabel("Crew Base State", row.baseState || "(not provided)"),
     rowLabel("Base City / Area", row.baseCity || "(not provided)"),
+    rowLabel("Base Zip Code", row.baseZip || "(not provided)"),
+    rowLabel("Union Status", row.unionStatus || "(not provided)"),
+    rowLabel("Workers Comp", row.workersComp || "(not provided)"),
+    rowLabel("Liability Limit", row.liabilityLimit || "(not provided)"),
+    rowLabel("Equipment Owned", row.equipmentOwned || "(none listed)"),
+    rowLabel("Bilingual Foreman", row.bilingualForeman || "(not provided)"),
     rowLabel("Travel Radius", row.travelRadius),
     rowLabel("Applied Via (Source City)", row.sourceCity || "(direct)"),
     rowLabel("Applied Via (Source Trade)", row.sourceTrade || "(generic)"),
@@ -317,6 +329,11 @@ export type GcLeadNotification = {
   licenseNumber: string
   startTiming: string
   message: string
+  jobsiteZip: string
+  unionLaborRequired: string
+  workersCompRequired: string
+  minLiabilityRequired: string
+  equipmentProvidedByGc: string
 }
 
 export async function sendGcLeadNotification(
@@ -338,6 +355,11 @@ export async function sendGcLeadNotification(
     rowLabel("Crew Size Needed", row.crewSize),
     rowLabel("Jobsite City", row.jobsiteCity || "(not provided)"),
     rowLabel("Jobsite State", row.jobsiteState),
+    rowLabel("Jobsite Zip Code", row.jobsiteZip || "(not provided)"),
+    rowLabel("Union Labor Required", row.unionLaborRequired || "(not specified)"),
+    rowLabel("Workers Comp Required", row.workersCompRequired || "(not provided)"),
+    rowLabel("Min. Liability Required", row.minLiabilityRequired || "(not specified)"),
+    rowLabel("Equipment Provided by GC", row.equipmentProvidedByGc || "(not specified)"),
     rowLabel("Project Size", row.projectSize || "(not provided)"),
     rowLabel("License #", row.licenseNumber || "(not provided)"),
     rowLabel("Start Timing", row.startTiming),
@@ -378,17 +400,18 @@ export type SubApplicationConfirmation = {
   email: string
 }
 
-/** "DAVID" -> "David", "carlos" -> "Carlos", "McDonald" -> "McDonald". */
+/** "DAVID" -> "David", "carlos" -> "Carlos", "McDonald" -> "McDonald", "AJ" -> "AJ". */
 function smartCase(value: string): string {
   const isAllCaps = value === value.toUpperCase() && /[A-Z]/.test(value)
   if (!isAllCaps) return value.charAt(0).toUpperCase() + value.slice(1)
   return value
     .split(" ")
-    .map((word) =>
-      word.length > 0
-        ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        : word,
-    )
+    .map((word) => {
+      if (word.length === 0) return word
+      // Keep short initials/acronyms as typed ("AJ", "JJ", "J.")
+      if (word.replace(/[^A-Za-z]/g, "").length <= 2) return word
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    })
     .join(" ")
 }
 

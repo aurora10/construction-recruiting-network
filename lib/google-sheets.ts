@@ -15,6 +15,12 @@ export type SubApplicationRow = {
   travelRadius: string
   baseState: string
   baseCity: string
+  baseZip: string
+  unionStatus: string
+  workersComp: string
+  liabilityLimit: string
+  equipmentOwned: string
+  bilingualForeman: string
 }
 
 export type GcLeadRow = {
@@ -36,12 +42,24 @@ export type GcLeadRow = {
   licenseNumber: string
   startTiming: string
   message: string
+  jobsiteZip: string
+  unionLaborRequired: string
+  workersCompRequired: string
+  minLiabilityRequired: string
+  equipmentProvidedByGc: string
 }
 
 const GC_LEADS_TAB = "GC Leads"
+// Column order mirrors the live "GC Leads" tab exactly (do not reorder without
+// updating the sheet: new matching criteria sit at C–G, source fields at B/H/I).
 const GC_LEADS_HEADERS = [
   "Timestamp",
   "Source City",
+  "Jobsite Zip Code",
+  "Union Labor Required",
+  "Workers Comp Required",
+  "Min. Liability Required",
+  "Equipment Provided by GC",
   "Source Trade",
   "Source URL",
   "Company / GC Name",
@@ -148,27 +166,33 @@ export async function appendSubApplicationToSheet(data: SubApplicationRow): Prom
   const { sheets, spreadsheetId } = getSheetsClient()
 
   const row = [
-    data.timestamp,
-    data.sourceCity || "",
-    data.sourceTrade || "",
-    data.sourceUrl || "",
-    data.name,
-    data.businessName || "",
-    data.phone,
-    data.email || "",
-    data.primaryTrade,
-    data.crewSize,
-    data.hasInsurance,
-    data.travelRadius,
-    "", // Column M: Vetting Status (Leave blank/null)
-    "", // Column N: GC Placement (Leave blank/null)
-    data.baseState || "", // Column O: Base State (crew's home state)
-    data.baseCity || "", // Column P: Base City (crew's home city, optional)
+    data.timestamp, // A
+    data.sourceCity || "", // B
+    data.sourceTrade || "", // C
+    data.sourceUrl || "", // D
+    data.name, // E
+    data.businessName || "", // F
+    data.phone, // G
+    data.email || "", // H
+    data.primaryTrade, // I
+    data.crewSize, // J
+    data.hasInsurance, // K
+    data.travelRadius, // L
+    "", // M: Vetting Status (manual)
+    "", // N: GC Placement (manual)
+    data.baseState || "", // O
+    data.baseCity || "", // P
+    data.baseZip || "", // Q
+    data.unionStatus || "", // R
+    data.workersComp || "", // S
+    data.liabilityLimit || "", // T
+    data.equipmentOwned || "", // U
+    data.bilingualForeman || "", // V
   ]
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: "Sheet1!A:P",
+    range: "Sheet1!A:V",
     valueInputOption: "USER_ENTERED",
     insertDataOption: "INSERT_ROWS",
     requestBody: {
@@ -181,27 +205,33 @@ export async function appendGcLeadToSheet(data: GcLeadRow): Promise<void> {
   const { sheets, spreadsheetId } = getSheetsClient()
   await ensureTabWithHeaders(sheets, spreadsheetId, GC_LEADS_TAB, GC_LEADS_HEADERS)
 
+  // Order must match the live "GC Leads" headers exactly.
   const row = [
-    data.timestamp,
-    data.sourceCity || "",
-    data.sourceTrade || "",
-    data.sourceUrl || "",
-    data.companyName,
-    data.name,
-    data.role || "",
-    data.phone,
-    data.email || "",
-    data.trade,
-    data.projectType,
-    data.crewSize,
-    data.jobsiteCity || "",
-    data.jobsiteState,
-    data.projectSize || "",
-    data.licenseNumber || "",
-    data.startTiming,
-    data.message || "",
-    "", // Status (manual)
-    "", // Assigned Crew (manual)
+    data.timestamp, // A
+    data.sourceCity || "", // B
+    data.jobsiteZip || "", // C
+    data.unionLaborRequired || "", // D
+    data.workersCompRequired || "", // E
+    data.minLiabilityRequired || "", // F
+    data.equipmentProvidedByGc || "", // G
+    data.sourceTrade || "", // H
+    data.sourceUrl || "", // I
+    data.companyName, // J
+    data.name, // K
+    data.role || "", // L
+    data.phone, // M
+    data.email || "", // N
+    data.trade, // O
+    data.projectType, // P
+    data.crewSize, // Q
+    data.jobsiteCity || "", // R
+    data.jobsiteState, // S
+    data.projectSize || "", // T
+    data.licenseNumber || "", // U
+    data.startTiming, // V
+    data.message || "", // W
+    "", // X: Status (manual)
+    "", // Y: Assigned Crew (manual)
   ]
 
   await sheets.spreadsheets.values.append({

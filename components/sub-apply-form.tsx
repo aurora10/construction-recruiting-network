@@ -25,6 +25,11 @@ const tradeOptions = [
 const crewSizeOptions = ["1-2", "3-5", "6-10", "10+"]
 const insuranceOptions = ["Yes", "No"]
 const travelRadiusOptions = ["Local Only", "Statewide"]
+const unionStatusOptions = ["Union", "Non-Union (Merit Shop)"]
+const workersCompOptions = ["Yes", "No", "Exempt"]
+const liabilityLimitOptions = ["Under $1M", "$1M", "$2M", "$5M+"]
+const equipmentOptions = ["Lifts", "Scissor Lift", "Skid Steer", "Mini Excavator", "None"]
+const bilingualOptions = ["Yes", "No"]
 
 function matchInitialTrade(tradeProp?: string): string {
   if (!tradeProp) return ""
@@ -58,6 +63,12 @@ export function SubApplyForm({
   const [hasInsurance, setHasInsurance] = useState("")
   const [baseState, setBaseState] = useState("")
   const [baseCity, setBaseCity] = useState("")
+  const [baseZip, setBaseZip] = useState("")
+  const [unionStatus, setUnionStatus] = useState("")
+  const [workersComp, setWorkersComp] = useState("")
+  const [liabilityLimit, setLiabilityLimit] = useState("")
+  const [equipmentOwned, setEquipmentOwned] = useState<string[]>([])
+  const [bilingualForeman, setBilingualForeman] = useState("")
   const [travelRadius, setTravelRadius] = useState("")
   const [step1Error, setStep1Error] = useState("")
 
@@ -88,6 +99,14 @@ export function SubApplyForm({
     }
     if (!baseState) {
       setStep1Error("Please select the state where your crew is based.")
+      return
+    }
+    if (!/^\d{5}$/.test(baseZip)) {
+      setStep1Error("Please enter a 5-digit ZIP code for your base location.")
+      return
+    }
+    if (!workersComp) {
+      setStep1Error("Please select your workers' comp status.")
       return
     }
     if (!travelRadius) {
@@ -309,6 +328,158 @@ export function SubApplyForm({
               }}
             />
           </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="sub-baseZip" className="text-sm font-bold text-foreground">
+              Base Zip Code
+            </label>
+            <input
+              id="sub-baseZip"
+              name="baseZip"
+              inputMode="numeric"
+              maxLength={5}
+              autoComplete="postal-code"
+              className={fieldClass}
+              placeholder="5-digit ZIP"
+              value={baseZip}
+              onChange={(e) => {
+                setBaseZip(e.target.value.replace(/\D/g, "").slice(0, 5))
+                setStep1Error("")
+              }}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="sub-unionStatus" className="text-sm font-bold text-foreground">
+              Union Status{" "}
+              <span className="font-medium text-muted-foreground">(optional)</span>
+            </label>
+            <select
+              id="sub-unionStatus"
+              name="unionStatus"
+              value={unionStatus}
+              onChange={(e) => {
+                setUnionStatus(e.target.value)
+                setStep1Error("")
+              }}
+              className={fieldClass}
+            >
+              <option value="">Select union status (optional)</option>
+              {unionStatusOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="sub-workersComp" className="text-sm font-bold text-foreground">
+              Workers Comp
+            </label>
+            <select
+              id="sub-workersComp"
+              name="workersComp"
+              value={workersComp}
+              onChange={(e) => {
+                setWorkersComp(e.target.value)
+                setStep1Error("")
+              }}
+              required={step === 1}
+              className={fieldClass}
+            >
+              <option value="" disabled>
+                Do you carry workers&apos; comp?
+              </option>
+              {workersCompOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="sub-liabilityLimit"
+              className="text-sm font-bold text-foreground"
+            >
+              Liability Limit{" "}
+              <span className="font-medium text-muted-foreground">(optional)</span>
+            </label>
+            <select
+              id="sub-liabilityLimit"
+              name="liabilityLimit"
+              value={liabilityLimit}
+              onChange={(e) => {
+                setLiabilityLimit(e.target.value)
+                setStep1Error("")
+              }}
+              className={fieldClass}
+            >
+              <option value="">Select coverage limit (optional)</option>
+              {liabilityLimitOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-bold text-foreground">
+              Equipment Owned{" "}
+              <span className="font-medium text-muted-foreground">(optional)</span>
+            </span>
+            <input type="hidden" name="equipmentOwned" value={equipmentOwned.join(", ")} />
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
+              {equipmentOptions.map((option) => (
+                <label key={option} className="flex items-center gap-2 text-sm text-foreground">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 accent-current"
+                    checked={equipmentOwned.includes(option)}
+                    onChange={(e) => {
+                      setStep1Error("")
+                      setEquipmentOwned((prev) => {
+                        if (option === "None") return e.target.checked ? ["None"] : []
+                        const next = e.target.checked
+                          ? [...prev.filter((v) => v !== "None"), option]
+                          : prev.filter((v) => v !== option)
+                        return next
+                      })
+                    }}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <fieldset className="flex flex-col gap-1.5">
+            <legend className="text-sm font-bold text-foreground">
+              Bilingual Foreman{" "}
+              <span className="font-medium text-muted-foreground">(optional)</span>
+            </legend>
+            <div className="flex gap-6">
+              {bilingualOptions.map((option) => (
+                <label key={option} className="flex items-center gap-2 text-sm text-foreground">
+                  <input
+                    type="radio"
+                    name="bilingualForeman"
+                    value={option}
+                    checked={bilingualForeman === option}
+                    onChange={(e) => {
+                      setBilingualForeman(e.target.value)
+                      setStep1Error("")
+                    }}
+                    className="h-4 w-4"
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="sub-travelRadius" className="text-sm font-bold text-foreground">

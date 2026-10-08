@@ -20,6 +20,8 @@ const crewSizeOptions = ["1-2", "3-5", "6-10", "10+"]
 const startTimingOptions = ["ASAP", "Within 2 weeks", "This month", "Date flexible"]
 const projectSizeOptions = ["Under $5K", "$5K – $25K", "$25K – $100K", "$100K+", "Not sure yet"]
 const roleOptions = ["Owner", "Project Manager", "Superintendent", "Estimator", "Other"]
+const liabilityOptions = ["$1M", "$2M", "$5M+"]
+const yesNoOptions = ["Yes", "No"]
 
 const defaultProjectTypes = [
   "Single-family residential",
@@ -81,9 +83,14 @@ export function LeadForm({
   const [projectType, setProjectType] = useState("")
   const [jobsiteCity, setJobsiteCity] = useState(() => initialJobsite.city)
   const [jobsiteState, setJobsiteState] = useState(() => initialJobsite.state)
+  const [jobsiteZip, setJobsiteZip] = useState("")
   const [crewSize, setCrewSize] = useState("")
   const [startTiming, setStartTiming] = useState("")
   const [projectSize, setProjectSize] = useState("")
+  const [unionLaborRequired, setUnionLaborRequired] = useState("")
+  const [workersCompRequired, setWorkersCompRequired] = useState("")
+  const [minLiabilityRequired, setMinLiabilityRequired] = useState("")
+  const [equipmentProvidedByGc, setEquipmentProvidedByGc] = useState("")
 
   // Step 2 — Contact
   const [companyName, setCompanyName] = useState("")
@@ -125,12 +132,20 @@ export function LeadForm({
       setStep1Error("Please select the state where the job is located.")
       return
     }
+    if (!/^\d{5}$/.test(jobsiteZip)) {
+      setStep1Error("Please enter a 5-digit ZIP code for the jobsite.")
+      return
+    }
     if (!crewSize) {
       setStep1Error("Please select the crew size you need.")
       return
     }
     if (!startTiming) {
       setStep1Error("Please tell us when the work needs to start.")
+      return
+    }
+    if (!workersCompRequired) {
+      setStep1Error("Please answer whether workers' comp is required.")
       return
     }
     setStep1Error("")
@@ -315,6 +330,26 @@ export function LeadForm({
           </div>
 
           <div className="flex flex-col gap-1.5">
+            <label htmlFor="gc-jobsiteZip" className="text-sm font-bold text-foreground">
+              Jobsite Zip Code
+            </label>
+            <input
+              id="gc-jobsiteZip"
+              name="jobsiteZip"
+              inputMode="numeric"
+              maxLength={5}
+              autoComplete="postal-code"
+              className={fieldClass}
+              placeholder="5-digit ZIP"
+              value={jobsiteZip}
+              onChange={(e) => {
+                setJobsiteZip(e.target.value.replace(/\D/g, "").slice(0, 5))
+                clearError()
+              }}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
             <label htmlFor="gc-crewSize" className="text-sm font-bold text-foreground">
               Crew Size Needed
             </label>
@@ -392,6 +427,108 @@ export function LeadForm({
               ))}
             </select>
           </div>
+
+          <fieldset className="flex flex-col gap-1.5">
+            <legend className="text-sm font-bold text-foreground">
+              Union Labor Required?{" "}
+              <span className="font-medium text-muted-foreground">(optional)</span>
+            </legend>
+            <div className="flex gap-6">
+              {yesNoOptions.map((option) => (
+                <label key={option} className="flex items-center gap-2 text-sm text-foreground">
+                  <input
+                    type="radio"
+                    name="unionLaborRequired"
+                    value={option}
+                    checked={unionLaborRequired === option}
+                    onChange={(e) => {
+                      setUnionLaborRequired(e.target.value)
+                      clearError()
+                    }}
+                    className="h-4 w-4"
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="flex flex-col gap-1.5">
+            <legend className="text-sm font-bold text-foreground">
+              Workers Comp Required?
+            </legend>
+            <div className="flex gap-6">
+              {yesNoOptions.map((option) => (
+                <label key={option} className="flex items-center gap-2 text-sm text-foreground">
+                  <input
+                    type="radio"
+                    name="workersCompRequired"
+                    value={option}
+                    required={step === 1}
+                    checked={workersCompRequired === option}
+                    onChange={(e) => {
+                      setWorkersCompRequired(e.target.value)
+                      clearError()
+                    }}
+                    className="h-4 w-4"
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="gc-minLiabilityRequired"
+              className="text-sm font-bold text-foreground"
+            >
+              Min. Liability Required{" "}
+              <span className="font-medium text-muted-foreground">(optional)</span>
+            </label>
+            <select
+              id="gc-minLiabilityRequired"
+              name="minLiabilityRequired"
+              value={minLiabilityRequired}
+              onChange={(e) => {
+                setMinLiabilityRequired(e.target.value)
+                clearError()
+              }}
+              className={fieldClass}
+            >
+              <option value="">Select minimum (optional)</option>
+              {liabilityOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <fieldset className="flex flex-col gap-1.5">
+            <legend className="text-sm font-bold text-foreground">
+              Equipment Provided by GC?{" "}
+              <span className="font-medium text-muted-foreground">(optional)</span>
+            </legend>
+            <div className="flex gap-6">
+              {yesNoOptions.map((option) => (
+                <label key={option} className="flex items-center gap-2 text-sm text-foreground">
+                  <input
+                    type="radio"
+                    name="equipmentProvidedByGc"
+                    value={option}
+                    checked={equipmentProvidedByGc === option}
+                    onChange={(e) => {
+                      setEquipmentProvidedByGc(e.target.value)
+                      clearError()
+                    }}
+                    className="h-4 w-4"
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
           {step1Error ? (
             <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm font-bold text-destructive">
